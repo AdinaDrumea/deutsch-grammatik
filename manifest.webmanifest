@@ -1,0 +1,16 @@
+{
+  "name": "Deutsch Grammatik Arcade",
+  "short_name": "Grammatik",
+  "description": "B1–B2 German grammar practice game with targeted tests, streaks and saved scores.",
+  "lang": "en",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#07111f",
+  "theme_color": "#07111f",
+  "orientation": "portrait-primary",
+  "icons": [
+    {"src": "./icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+    {"src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}

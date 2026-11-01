@@ -1,4 +1,4 @@
-const CACHE = 'deutsch-grammatik-arcade-v3';
+const CACHE = 'deutsch-grammatik-arcade-v5';
 const ASSETS = [
   './',
   './index.html',
@@ -19,9 +19,7 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(
-        keys.filter(key => key !== CACHE).map(key => caches.delete(key))
-      ))
+      .then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key))))
       .then(() => self.clients.claim())
   );
 });
@@ -29,7 +27,6 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') return;
 
-  // Network-first for page navigations so GitHub Pages updates appear promptly.
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request)
@@ -43,14 +40,11 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Static assets remain cache-first for fast/offline use.
   event.respondWith(
-    caches.match(event.request).then(cached => {
-      return cached || fetch(event.request).then(response => {
-        const copy = response.clone();
-        caches.open(CACHE).then(cache => cache.put(event.request, copy));
-        return response;
-      });
-    })
+    caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
+      const copy = response.clone();
+      caches.open(CACHE).then(cache => cache.put(event.request, copy));
+      return response;
+    }))
   );
 });

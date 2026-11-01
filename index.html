@@ -76,368 +76,655 @@
   .footerNote{color:var(--muted);font-size:.8rem;text-align:center;margin-top:24px}
   @media(max-width:720px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr 1fr}.answerRow{flex-direction:column}.topbar{align-items:flex-start}.hero{padding:20px}.quizCard{padding:20px}.testbtn{flex:1;min-height:46px}.boss{grid-column:auto}.primary,.secondary,.back,.iconbtn{min-height:44px}.char{min-width:42px;min-height:38px}.prompt{font-size:1.28rem}.wrap{padding-top:calc(18px + env(safe-area-inset-top));padding-bottom:calc(34px + env(safe-area-inset-bottom))}}
   @media(display-mode:standalone){.footerNote{padding-bottom:6px}.topbar{margin-top:2px}}
+
+  .topActions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+  .cardTools{margin-top:13px}
+  .rulesbtn{border:1px solid var(--line);background:rgba(124,92,255,.08);color:var(--text);padding:8px 11px;border-radius:10px}
+  .rulesbtn:hover{border-color:var(--accent)}
+  .rulesShell{max-width:860px;margin:0 auto}.rulesCard{background:rgba(16,29,49,.96);border:1px solid var(--line);border-radius:24px;padding:26px;box-shadow:var(--shadow)}
+  .ruleIntro h2{margin:0 0 8px}.ruleIntro p{color:var(--muted);line-height:1.6;margin:0}.ruleSection{margin-top:24px}.ruleSection h3{margin:0 0 10px}.ruleLine{padding:11px 13px;margin-top:8px;background:#0c1829;border:1px solid var(--line);border-radius:12px;line-height:1.5}.ruleExamples{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.ruleExample{background:#091525;border:1px solid #38506e;padding:11px 13px;border-radius:12px}.ruleTrap{margin-top:24px;padding:15px 16px;border:1px solid rgba(255,184,77,.4);background:rgba(255,184,77,.08);border-radius:14px}.ruleTrap p{margin:5px 0 0;color:var(--muted);line-height:1.5}.levelRow{display:grid;grid-template-columns:minmax(150px,.8fr) 1.4fr;gap:14px;padding:10px 0;border-bottom:1px solid rgba(41,64,95,.7)}.levelRow span{color:var(--muted)}
+  .rulesIndex{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}.ruleTopic{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;text-align:left;align-items:start;border:1px solid var(--line);background:#0c1829;color:var(--text);padding:15px;border-radius:15px}.ruleTopic span{grid-row:1/3;font-size:1.5rem}.ruleTopic small{color:var(--muted);line-height:1.35}.ruleTopic:hover{border-color:var(--accent)}
+  @media(max-width:720px){.topActions{width:100%;justify-content:flex-start}.rulesIndex,.ruleExamples{grid-template-columns:1fr}.levelRow{grid-template-columns:1fr;gap:4px}.rulesCard{padding:20px}.quizTop{flex-wrap:wrap}}
 </style>
 </head>
 <body>
 <div class="wrap" id="home">
   <div class="topbar">
     <div class="brand"><div class="logo">DE</div><div><h1>Deutsch Grammatik Arcade</h1><p>B1 → B2 · your personal grammar gym</p></div></div>
-    <button class="iconbtn" id="soundToggle" title="Toggle sound">🔊 Sound</button>
+    <div class="topActions"><button class="iconbtn" id="rulesIndexBtn">📘 Rules</button><button class="iconbtn" id="soundToggle" title="Toggle sound">🔊 Sound</button></div>
   </div>
   <section class="hero">
     <h2>Turn the annoying grammar bits into reflexes.</h2>
-    <p>This game is tuned to the patterns from your diagnostic: adjective endings, reported speech, past hypotheticals, replacement infinitives, passive with modals, cases, past forms, and pronouns. Each topic has three 20-question tests. Your best scores are saved on this device.</p>
+    <p>Each topic now has five 20-question tests. The first two are deliberately grouped so you can see the pattern; the later tests mix forms and raise the difficulty. Every topic also has a grammar-rules page.</p>
     <div class="stats"><div class="stat"><strong id="testsDone">0</strong><span>tests completed</span></div><div class="stat"><strong id="avgScore">–</strong><span>average best score</span></div><div class="stat"><strong id="bestStreak">0</strong><span>best streak</span></div></div>
   </section>
-  <div class="sectionTitle"><h3>Your practice map</h3><span>24 targeted tests + 1 mixed boss run</span></div>
+  <div class="sectionTitle"><h3>Your practice map</h3><span>40 targeted tests + 1 mixed boss run</span></div>
   <div class="grid" id="topicGrid"></div>
+  <div class="footerNote">Easy tests are grouped by pattern. Mixed Practice, Challenge and Mastery deliberately shuffle the patterns.</div>
   <div class="footerNote">Tip: press Enter to check / continue. Swiss spelling with “ss” is accepted where relevant.</div>
   <div class="footerNote" id="installHint" style="display:none">On iPhone: Safari → Share → <b>Add to Home Screen</b>. Then the game opens like an app and works offline.</div>
 </div>
 
 <div class="wrap hidden" id="quizView">
   <div class="quizShell">
-    <div class="quizTop"><button class="back" id="backBtn">← Home</button><div class="qmeta"><strong id="quizTitle"></strong><span id="quizSubtitle"></span></div><button class="iconbtn" id="soundToggle2">🔊</button></div>
+    <div class="quizTop"><button class="back" id="backBtn">← Home</button><div class="qmeta"><strong id="quizTitle"></strong><span id="quizSubtitle"></span></div><button class="iconbtn" id="quizRulesBtn">📘</button><button class="iconbtn" id="soundToggle2">🔊</button></div>
     <div class="progress"><div id="progressBar"></div></div>
-    <div class="quizCard" id="quizCard">
-      <div class="pill" id="qPill"></div>
-      <div class="prompt" id="prompt"></div>
-      <div class="cue" id="cue"></div>
-      <div class="answerRow"><input class="answer" id="answerInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type your answer…"/><button class="primary" id="checkBtn">Check</button></div>
-      <div class="chars" id="chars"></div>
-      <div class="feedback hidden" id="feedback"></div>
-      <div class="actions"><div class="streak" id="streakText">🔥 0 streak</div><button class="primary hidden" id="nextBtn">Next →</button></div>
-    </div>
+    <div class="quizCard" id="quizCard"></div>
+  </div>
+</div>
+
+<div class="wrap hidden" id="rulesView">
+  <div class="rulesShell">
+    <div class="quizTop"><button class="back" id="rulesBackBtn">← Back</button><div class="qmeta"><strong id="rulesTitle">Grammar rules</strong><span id="rulesSubtitle">Choose a topic</span></div></div>
+    <div class="rulesCard" id="rulesContent"></div>
   </div>
 </div>
 <div class="confetti" id="confetti"></div>
 
 <script>
 const THEMES = [
-  {id:'adj', emoji:'🎯', title:'Adjective Endings', desc:'The recurring one: ein-/possessive words, no article, mixed cases, participles.'},
-  {id:'k1', emoji:'🗞️', title:'Konjunktiv I', desc:'Reported speech: er sei, er habe, er könne, plus perfect forms.'},
-  {id:'k2past', emoji:'🕰️', title:'Konjunktiv II Past', desc:'Past hypotheticals with hätte/wäre + Partizip II and modal combinations.'},
-  {id:'ersatz', emoji:'🧩', title:'Ersatzinfinitiv', desc:'Perfekt with modals and lassen: arbeiten müssen, reparieren lassen.'},
-  {id:'passive', emoji:'⚙️', title:'Passive + Modal Verbs', desc:'muss gemacht werden, darf nicht geraucht werden, tense switches.'},
-  {id:'cases', emoji:'🧭', title:'Cases & Wechselpräpositionen', desc:'Direction vs location, fixed verb cases, prepositions and pronouns.'},
-  {id:'past', emoji:'⏳', title:'Past & Modal Forms', desc:'musste/müsste, hatte/hätte, war/wäre, wurde/würde, Plusquamperfekt.'},
-  {id:'pron', emoji:'🔗', title:'Pronouns & Relative Clauses', desc:'da-compounds, person vs thing, den/dem, dessen/deren, preposition relatives.'}
+  {id:'adj', emoji:'🎯', title:'Adjective Endings', desc:'Articles, no article, mixed cases, plurals and participles.'},
+  {id:'k1', emoji:'🗞️', title:'Konjunktiv I', desc:'Reported speech across persons, perfect, passive and replacement forms.'},
+  {id:'k2past', emoji:'🕰️', title:'Konjunktiv II Past', desc:'Past hypotheticals with hätte/wäre, modals and double infinitives.'},
+  {id:'ersatz', emoji:'🧩', title:'Ersatzinfinitiv', desc:'Perfekt with modals and lassen, including subordinate-clause word order.'},
+  {id:'passive', emoji:'⚙️', title:'Passive + Modal Verbs', desc:'Active → passive transformations with explicit source verbs and tense cues.'},
+  {id:'cases', emoji:'🧭', title:'Cases & Wechselpräpositionen', desc:'Direction vs location, fixed cases, prepositions and unambiguous pronoun cues.'},
+  {id:'past', emoji:'⏳', title:'Past & Modal Forms', desc:'Real past vs hypothetical forms, Plusquamperfekt and passive/conditional contrasts.'},
+  {id:'pron', emoji:'🔗', title:'Pronouns & Relative Clauses', desc:'da-compounds, people vs things, relative cases and preposition relatives.'}
 ];
-const TEST_NAMES=['Warm-up','Pressure','Mastery'];
-let soundOn = JSON.parse(localStorage.getItem('dga_sound') ?? 'true');
-let state={theme:null,test:0,questions:[],index:0,score:0,streak:0,bestStreak:0,answered:false,mistakes:[]};
+const TEST_NAMES=['Pattern Drill','Build-up','Mixed Practice','Challenge','Mastery'];
+const LEVEL_TEXT=[
+  'Grouped examples: one pattern at a time.',
+  'Grouped examples: a second pattern set, still in sequence.',
+  'Mixed forms: identify the pattern yourself.',
+  'Harder transformations and word order.',
+  'Full mixed review with advanced traps.'
+];
+
+const RULES={
+  adj:{
+    intro:'Adjective endings depend on the article signal, gender, number and case. The key question is: does the article already show the case/gender clearly?',
+    patterns:[
+      'After der/die/das and other definite words, adjectives are usually weak: -e in the simplest nominative/accusative slots, otherwise -en.',
+      'After ein-/possessive words, the adjective supplies missing information: ein guter Mann, eine gute Idee, ein gutes Buch; most other slots take -en.',
+      'With no article, the adjective carries the strong case ending: guter Kaffee, kalte Milch, mit gutem Wein.',
+      'Participles used before nouns behave like adjectives: ein geschriebener Brief, der unterschriebene Vertrag.'
+    ],
+    examples:['ein guter Freund','ich sehe einen guten Freund','mit einem guten Freund','frischer Kaffee / mit frischem Kaffee'],
+    trap:'Do not choose the ending from the adjective itself. Read article + case + gender first.'
+  },
+  k1:{
+    intro:'Konjunktiv I is mainly used for indirect/reported speech. It signals that you are reporting somebody else’s statement rather than confirming it yourself.',
+    patterns:[
+      'Typical endings are -e, -est, -e, -en, -et, -en. sein is special: sei, seiest, sei, seien, seiet, seien.',
+      'Perfect reported speech uses Konjunktiv I of haben/sein + Partizip II: er habe gearbeitet; sie sei gekommen.',
+      'Passive reported speech uses Konjunktiv I of werden: der Bericht werde veröffentlicht.',
+      'If a Konjunktiv-I form is identical to the indicative, formal German often uses Konjunktiv II as an Ersatzform to keep the reported-speech signal clear: sie hätten / sie kämen / sie könnten.'
+    ],
+    examples:['er sei krank','du habest Zeit','ihr seiet bereit','sie hätten keine Zeit (replacement because K I = indicative)'],
+    trap:'Many plural K-I forms look exactly like the indicative. That is why the advanced tests ask you to decide when a replacement form is needed.'
+  },
+  k2past:{
+    intro:'Konjunktiv II Vergangenheit describes unreal or counterfactual situations in the past.',
+    patterns:[
+      'Most verbs: hätte + Partizip II: ich hätte gelernt.',
+      'Verbs that form Perfekt with sein: wäre + Partizip II: ich wäre gekommen.',
+      'With modal verbs, use the double infinitive (Ersatzinfinitiv): ich hätte arbeiten müssen.',
+      'In a subordinate clause with a modal double infinitive, the finite auxiliary comes before the infinitives: weil ich hätte arbeiten müssen.'
+    ],
+    examples:['Wenn ich mehr gelernt hätte ...','Wenn du früher gekommen wärst ...','Ich hätte länger arbeiten müssen.'],
+    trap:'Do not use the modal participle (gemusst) when another infinitive is present.'
+  },
+  ersatz:{
+    intro:'In Perfekt with a modal verb plus another infinitive, the modal stays in the infinitive. The same pattern is used with lassen + infinitive.',
+    patterns:[
+      'Modal + infinitive: Ich habe länger arbeiten müssen — not “gemusst”.',
+      'lassen + infinitive: Ich habe das Auto reparieren lassen — not “gelassen”.',
+      'Subordinate clause: ..., weil ich habe arbeiten müssen / ..., weil ich das Auto habe reparieren lassen.',
+      'Past hypothetical: Ich hätte länger arbeiten müssen.'
+    ],
+    examples:['habe kommen können','hat gehen dürfen','habe reparieren lassen','weil er hat arbeiten müssen'],
+    trap:'The source sentence or verb cue tells you which modal is intended; the quiz no longer asks you to guess it from meaning alone.'
+  },
+  passive:{
+    intro:'Passive focuses on what happens to something. With a modal, the structure is modal + Partizip II + werden.',
+    patterns:[
+      'Active: Man muss die Rechnung bezahlen. Passive: Die Rechnung muss bezahlt werden.',
+      'Impersonal passive: Man darf hier nicht rauchen. → Hier darf nicht geraucht werden.',
+      'Präteritum passive: wurde + Partizip II.',
+      'Perfekt passive: ist + Partizip II + worden. With a modal in Perfekt: hat + Partizip II + werden + modal infinitive.'
+    ],
+    examples:['muss bezahlt werden','darf nicht geraucht werden','wurde repariert','ist repariert worden'],
+    trap:'The exercise always gives you the active/source verb or a verb cue, so you are testing grammar rather than guessing vocabulary.'
+  },
+  cases:{
+    intro:'Cases are determined by grammar: the preposition, the verb, or — with Wechselpräpositionen — whether the phrase expresses destination/change of position or location.',
+    patterns:[
+      'Wechselpräposition + destination/change: Akkusativ — Ich lege das Buch auf den Tisch.',
+      'Wechselpräposition + location: Dativ — Das Buch liegt auf dem Tisch.',
+      'Always dative: mit, nach, aus, zu, von, bei. Always accusative: für, ohne, durch, gegen, um.',
+      'Some verbs govern a fixed case: helfen/danken/folgen + Dativ; fragen/sehen + Akkusativ.'
+    ],
+    examples:['mit Paul → mit ihm','mit Anna → mit ihr','auf den Tisch / auf dem Tisch','für die Firma'],
+    trap:'A blank such as “mit ___” is ambiguous without an antecedent. The revised questions always name the person or noun first.'
+  },
+  past:{
+    intro:'This topic contrasts similar-looking forms by telling you the intended verb and meaning: real past, hypothetical, passive, conditional or earlier past.',
+    patterns:[
+      'Real past modal: musste, durfte, konnte, wollte, sollte, mochte.',
+      'Hypothetical present: müsste, dürfte, könnte; hätte, wäre; würde + infinitive.',
+      'Past passive: wurde + Partizip II. Conditional: würde + infinitive.',
+      'Plusquamperfekt: hatte/war + Partizip II, depending on the verb’s Perfekt auxiliary.'
+    ],
+    examples:['Gestern musste ich ...','Wenn ich Zeit hätte ...','Das Haus wurde verkauft.','Nachdem ich gegessen hatte ...'],
+    trap:'The revised prompts include the infinitive or a label such as “real past” / “hypothetical”, so the answer is not a vocabulary guess.'
+  },
+  pron:{
+    intro:'German treats people and things differently after many prepositions, and relative pronouns change with case and gender.',
+    patterns:[
+      'Thing/topic after a preposition: da(r)+preposition — darauf, daran, darüber, damit.',
+      'Person after a preposition: preposition + personal pronoun — auf ihn, mit ihr, von ihm.',
+      'Relative pronoun case depends on its job inside the relative clause: den (acc.), dem (dat.), dessen/deren (gen.).',
+      'With a preposition, keep the preposition before the relative pronoun: mit dem, auf die, über das.'
+    ],
+    examples:['auf den Bus → darauf','auf Paul → auf ihn','der Kollege, den ich anrufe','der Mann, mit dem ich spreche'],
+    trap:'First decide person vs thing; for relative clauses, ignore the case of the noun outside the clause and determine the pronoun’s role inside the clause.'
+  }
+};
+
+let soundOn=JSON.parse(localStorage.getItem('dga_sound') ?? 'true');
+let audioCtx=null;
+let rulesReturn='home';
+let state={theme:null,test:0,questions:[],index:0,score:0,streak:0,bestStreak:0,answered:false,mistakes:[],retryMode:false};
 
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
 function normalize(s){return String(s).trim().toLowerCase().replace(/[.,!?;:]+$/g,'').replace(/ß/g,'ss').replace(/\s+/g,' ');}
-function isCorrect(input, answers){const n=normalize(input);return answers.some(a=>normalize(a)===n);}
-function q(prompt, answer, explanation='', cue='', tag='Fill the gap', variants=[]){return {prompt,answers:[answer,...variants],answer,explanation,cue,tag};}
+function isCorrect(input,answers){const n=normalize(input);return answers.some(a=>normalize(a)===n);}
+function q(prompt,answer,explanation='',cue='',tag='Fill the gap',variants=[]){return {prompt,answers:[answer,...variants],answer,explanation,cue,tag};}
 function seeded(seed){let x=seed%2147483647;if(x<=0)x+=2147483646;return ()=> (x=x*16807%2147483647)/2147483647;}
-function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return Math.abs(h)}
-function pick20(arr,key){const r=seeded(hash(key));return [...arr].sort(()=>r()-.5).slice(0,20);}
+function hash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return Math.abs(h);}
+function shuffled(arr,key){const r=seeded(hash(key));const out=[...arr];for(let i=out.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[out[i],out[j]]=[out[j],out[i]];}return out;}
+function take20(arr,key='ordered'){if(arr.length>=20)return arr.slice(0,20);const out=[];let round=0;while(out.length<20&&arr.length){for(const item of shuffled(arr,`${key}-${round++}`)){out.push({...item});if(out.length===20)break;}}return out;}
+function pick20(arr,key){return take20(shuffled(arr,key),key);}
 
+function adjForm(a,end){const stem=a==='teuer'?'teur':a;return stem+end;}
 function adjectiveEnding(type,g,c){
   if(type==='def'){
-    if(c==='nom' && ['m','f','n'].includes(g)) return 'e';
-    if(c==='acc' && ['f','n'].includes(g)) return 'e';
+    if(c==='nom'&&['m','f','n'].includes(g))return 'e';
+    if(c==='acc'&&['f','n'].includes(g))return 'e';
     return 'en';
   }
   if(type==='ein'){
     const strong={nom:{m:'er',f:'e',n:'es'},acc:{m:'en',f:'e',n:'es'},dat:{m:'en',f:'en',n:'en'}};
     return strong[c][g];
   }
-  const strong={nom:{m:'er',f:'e',n:'es'},acc:{m:'en',f:'e',n:'es'},dat:{m:'em',f:'er',n:'em'}};
+  const strong={nom:{m:'er',f:'e',n:'es',p:'e'},acc:{m:'en',f:'e',n:'es',p:'e'},dat:{m:'em',f:'er',n:'em',p:'en'}};
   return strong[c][g];
 }
-const adjNouns={
-  m:[['Bruder','mein','meinen','meinem'],['Nachbar','unser','unseren','unserem'],['Freund','dein','deinen','deinem'],['Sohn','ihr','ihren','ihrem'],['Onkel','sein','seinen','seinem']],
-  f:[['Schwester','meine','meine','meiner'],['Wohnung','eine','eine','einer'],['Idee','eine','eine','einer'],['Jacke','eine','eine','einer']],
-  n:[['Hotel','ein','ein','einem'],['Buch','mein','mein','meinem'],['Kleid','ein','ein','einem'],['Auto','unser','unser','unserem']]
-};
 function buildAdj(level){
-  const out=[];const adjs=['alt','jung','neu','nett','interessant','teuer','klein','modern','praktisch','ruhig'];
-  // ein-/possessive words
-  ['m','f','n'].forEach(g=>adjNouns[g].forEach(([noun,nomDet,accDet,datDet])=>adjs.slice(0,7).forEach(a=>{
-    out.push(q(`Das ist ${nomDet} ___ ${noun}.`,a+adjectiveEnding('ein',g,'nom'),`${nomDet} + ${g==='m'?'masculine':g==='f'?'feminine':'neuter'} nominative → adjective ending ${adjectiveEnding('ein',g,'nom')}.`,a));
-    out.push(q(`Ich ${g==='m'?'sehe':g==='f'?'mag':'suche'} ${accDet} ___ ${noun}.`,a+adjectiveEnding('ein',g,'acc'),`Accusative after an ein-/possessive word → ${adjectiveEnding('ein',g,'acc')}.`,a));
-    out.push(q(`Ich spreche von ${datDet} ___ ${noun}.`,a+adjectiveEnding('ein',g,'dat'),`Dative after an ein-/possessive word → -en.`,a));
-  })));
-  const strongSets=[
-    ['m','nom','Kaffee','___ Kaffee schmeckt mir besser als Tee.'],['m','acc','Kaffee','Ich trinke gern ___ Kaffee.'],['m','dat','Wein','Mit ___ Wein schmeckt das Essen gut.'],
-    ['f','nom','Milch','___ Milch ist nicht immer leicht zu finden.'],['f','acc','Musik','Ich höre gern ___ Musik.'],['f','dat','Musik','Mit ___ Musik kann ich besser arbeiten.'],
-    ['n','nom','Brot','___ Brot riecht wunderbar.'],['n','acc','Brot','Wir kaufen ___ Brot.'],['n','dat','Brot','Mit ___ Brot schmeckt die Suppe besser.']
+  const out=[];
+  if(level===0){
+    const groups=[
+      ['m','nom','mein','Bruder',['gut','alt','jung','nett','ruhig']],
+      ['f','nom','meine','Schwester',['gut','alt','jung','nett','ruhig']],
+      ['n','nom','mein','Buch',['gut','alt','neu','teuer','praktisch']],
+      ['m','acc','meinen','Bruder',['gut','alt','jung','nett','ruhig']],
+      ['m','dat','meinem','Bruder',['gut','alt','jung','nett','ruhig']]
+    ];
+    groups.forEach(([g,c,det,noun,adjs])=>adjs.forEach(a=>out.push(q(`Setze die richtige Adjektivform ein: ${det} ___ ${noun}.`,adjForm(a,adjectiveEnding('ein',g,c)),`${det} + ${c} → adjective ending ${adjectiveEnding('ein',g,c)}.`,`Grundform: ${a} · Kasus: ${c}`,'Adjective ending'))));
+    return out;
+  }
+  if(level===1){
+    const defs=[['m','nom','der','Mann'],['f','nom','die','Frau'],['n','acc','das','Buch'],['m','acc','den','Mann'],['f','dat','der','Frau'],['m','dat','dem','Mann']];
+    ['neu','alt','freundlich','interessant'].forEach(a=>defs.forEach(([g,c,det,n])=>out.push(q(`${det} ___ ${n}`,adjForm(a,adjectiveEnding('def',g,c)),`Definite article + ${c} → ${adjectiveEnding('def',g,c)}.`,`Grundform: ${a}`,'Definite article'))));
+    const strong=[['m','nom','Kaffee'],['f','nom','Milch'],['n','acc','Brot'],['m','dat','Wein'],['f','dat','Musik']];
+    ['frisch','kalt','gut','deutsch'].forEach(a=>strong.forEach(([g,c,n])=>out.push(q(`${a} → ___ ${n}`,adjForm(a,adjectiveEnding('none',g,c)),`No article: strong ending ${adjectiveEnding('none',g,c)}.`,`Kasus: ${c} · Genus: ${g}`,'No article'))));
+    return out;
+  }
+  const nouns=[
+    ['m','nom','ein','Brief'],['m','acc','einen','Vertrag'],['m','dat','einem','Kollegen'],
+    ['f','nom','eine','Idee'],['f','acc','eine','Jacke'],['f','dat','einer','Kollegin'],
+    ['n','nom','ein','Auto'],['n','acc','ein','Hotel'],['n','dat','einem','Buch']
   ];
-  ['frisch','stark','deutsch','italienisch','gut','kalt','warm'].forEach(a=>strongSets.forEach(([g,c,n,p])=>out.push(q(p,a+adjectiveEnding('none',g,c),`No article: the adjective carries the case/gender signal → ${adjectiveEnding('none',g,c)}.`,a))));
-  if(level>=1){
-    out.push(q('Auf dem Tisch liegt ein ___ Brief.','geschriebener','Partizip II works like an adjective: ein + masculine nominative → -er.','schreiben → Partizip II'));
-    out.push(q('Sie trägt eine frisch ___ Jacke.','gewaschene','eine + feminine accusative → -e.','waschen → Partizip II'));
-    out.push(q('Wir sprechen über den gestern ___ Vertrag.','unterschriebenen','After den (masculine accusative), adjective/participle → -en.','unterschreiben → Partizip II'));
+  const adjs=['neu','alt','teuer','praktisch','interessant','modern','ruhig','freundlich'];
+  nouns.forEach(([g,c,det,n],i)=>adjs.slice(i%3,i%3+4).forEach(a=>out.push(q(`Wähle die Form: ${det} ___ ${n}.`,adjForm(a,adjectiveEnding('ein',g,c)),`ein-/possessive pattern, ${c} ${g} → ${adjectiveEnding('ein',g,c)}.`,`Grundform: ${a}`,'Mixed adjective'))));
+  [['geschrieben','m','nom','ein','Brief'],['unterschrieben','m','acc','den','Vertrag'],['gewaschen','f','acc','eine','Jacke'],['geöffnet','n','nom','das','Fenster'],['repariert','n','dat','dem','Auto']].forEach(([a,g,c,det,n])=>out.push(q(`${det} ___ ${n}`,adjForm(a,adjectiveEnding(det==='ein'?'ein':'def',g,c)),`Participle used as adjective: ending ${adjectiveEnding(det==='ein'?'ein':'def',g,c)}.`,`Partizip: ${a}`,'Participle adjective')));
+  if(level>=3){
+    [['p','nom','frisch','Tomaten'],['p','acc','reif','Äpfel'],['p','dat','neu','Kollegen']].forEach(([g,c,a,n])=>out.push(q(`Ohne Artikel: ___ ${n}`,adjForm(a,adjectiveEnding('none',g,c)),`Strong plural ${c} ending → ${adjectiveEnding('none',g,c)}.`,`Grundform: ${a}`,'Plural')));
+    ['bekannt','erfahren','motiviert','ausgebildet','beschädigt','bestellt'].forEach((a,i)=>out.push(q(`Setze die Form ein: ${i%2?'mit dem':'der'} ___ ${i%2?'Mitarbeiter':'Bericht'}.`,adjForm(a,(i%2?'en':'e')),i%2?'After dem → -en.':'After der + masculine nominative noun → -e.',`Grundform: ${a}`,'Advanced adjective')));
   }
-  return out;
-}
-
-const k1Present=[
-  ['bin','sei','heute krank'],['habe','habe','keine Zeit'],['komme','komme','morgen'],['gehe','gehe','jetzt nach Hause'],['bleibe','bleibe','heute zu Hause'],['werde','werde','bald fertig'],['weiss','wisse','nichts davon'],['finde','finde','die Idee gut'],['brauche','brauche','mehr Zeit'],['arbeite','arbeite','heute länger'],['wohne','wohne','in Basel'],['lerne','lerne','jeden Tag Deutsch'],
-  ['kann','könne','morgen kommen'],['muss','müsse','heute arbeiten'],['darf','dürfe','früher gehen'],['will','wolle','mehr lernen'],['soll','solle','morgen anrufen'],['mag','möge','diesen Film']
-];
-function buildK1(level){
-  const out=[];
-  k1Present.forEach(([ind,k1,rest],i)=>{
-    const who=i%2?'Er':'Sie';
-    out.push(q(`${who} sagt: „Ich ${ind} ${rest}.“\n${who} sagt, ${who.toLowerCase()} ___ ${rest}.`,k1,'Reported speech uses Konjunktiv I in formal/neutral reporting.'));
-  });
-  const perf=[
-    ['gearbeitet','habe'],['gelernt','habe'],['angerufen','habe'],['gegessen','habe'],['geschlafen','habe'],['gesehen','habe'],['gelesen','habe'],['gekauft','habe'],['verstanden','habe'],['vergessen','habe'],
-    ['gekommen','sei'],['gegangen','sei'],['gefahren','sei'],['geblieben','sei'],['aufgestanden','sei'],['angekommen','sei'],['eingeschlafen','sei'],['zurückgekehrt','sei']
-  ];
-  perf.forEach(([part,aux],i)=>{const directAux=aux==='sei'?'bin':'habe';out.push(q(`Er sagt: „Ich ${directAux} gestern ${part}.“\nEr sagt, er ___ gestern ${part}.`,aux,`Perfect in reported speech: Konjunktiv I of the auxiliary (${aux}) + participle.`));});
-  if(level>=2){
-    out.push(q('Die Sprecherin sagt: „Das Problem wird bald gelöst.“\nSie sagt, das Problem ___ bald gelöst.','werde','Reported passive: werde + Partizip II.'));
-    out.push(q('Er sagt: „Ich bin gestern nicht gekommen.“\nEr sagt, er ___ gestern nicht gekommen.','sei','Perfect with a sein-verb → sei + Partizip II.'));
-  }
-  return out;
-}
-
-function buildK2Past(level){
-  const out=[];
-  const habenParts=['gelernt','gearbeitet','gegessen','gesehen','verstanden','vergessen','gekauft','angerufen','gelesen','gemacht','gesagt','geschlafen'];
-  const seinParts=['gekommen','gegangen','gefahren','geblieben','aufgestanden','angekommen','eingeschlafen','zurückgekehrt'];
-  ['ich','du','er','wir','ihr','sie'].forEach((sub,idx)=>{
-    const h=['hätte','hättest','hätte','hätten','hättet','hätten'][idx];
-    const w=['wäre','wärst','wäre','wären','wärt','wären'][idx];
-    habenParts.slice(0,5).forEach(p=>out.push(q(`Wenn ${sub} mehr ${p} ___, wäre alles leichter gewesen.`,h,`Past counterfactual with haben-verb → Partizip II + ${h}.`)));
-    seinParts.slice(0,4).forEach(p=>out.push(q(`Wenn ${sub} früher ${p} ___, hätten wir mehr Zeit gehabt.`,w,`Past counterfactual with sein-verb → Partizip II + ${w}.`)));
-  });
-  if(level>=1){
-    out.push(q('Wenn ich mehr gelernt ___, hätte ich die Prüfung bestanden.','hätte','Past Konjunktiv II: gelernt hätte.'));
-    out.push(q('Wenn du früher losgefahren ___, wärst du pünktlich angekommen.','wärst','losfahren forms Perfekt with sein → losgefahren wärst.'));
-  }
-  if(level>=2){
-    const modal=[['arbeiten','müssen'],['kommen','können'],['gehen','dürfen'],['helfen','können'],['bleiben','müssen'],['fahren','dürfen']];
-    modal.forEach(([inf,mod])=>out.push(q(`Wenn ich gestern nicht ___, wäre ich mitgekommen.`,`hätte ${inf} ${mod}`,`Past counterfactual with a modal uses hätte + infinitive + modal infinitive (Ersatzinfinitiv).`)));
-  }
-  return out;
-}
-
-function buildErsatz(level){
-  const out=[];
-  const modal=[
-    ['länger','arbeiten','müssen'],['früher','gehen','dürfen'],['nicht','kommen','können'],['mehr','lernen','müssen'],['zu Hause','bleiben','müssen'],['dir','helfen','können'],['das','erklären','können'],['früh','aufstehen','müssen'],['allein','fahren','dürfen'],['','warten','müssen']
-  ];
-  modal.forEach(([pre,inf,mod])=>{
-    const phrase=(pre?pre+' ':'')+inf;
-    out.push(q(`Ich habe gestern ${phrase} ___.`,mod,`With a modal + another infinitive in Perfekt, use the Ersatzinfinitiv: ${phrase} ${mod}.`));
-    out.push(q(`Er hat gestern ${phrase} ___.`,mod,`The modal stays infinitive, not participle.`));
-  });
-  const lassen=[['mein Auto','reparieren'],['meine Haare','schneiden'],['die Wohnung','streichen'],['den Computer','prüfen'],['die Tür','öffnen'],['das Paket','liefern']];
-  lassen.forEach(([obj,inf])=>out.push(q(`Ich habe ${obj} ${inf} ___.`,'lassen','Perfekt with lassen + infinitive uses lassen, not gelassen.')));
-  if(level>=1){
-    modal.forEach(([pre,inf,mod])=>out.push(q(`..., weil ich gestern ${pre?pre+' ':''}habe ${inf} ___.`,mod,'In a subordinate clause with Ersatzinfinitiv, the finite auxiliary stands before the two infinitives.')));
-    lassen.forEach(([obj,inf])=>out.push(q(`..., weil ich ${obj.replace('mein ','das ').replace('meine ','die ')} habe ${inf} ___.`,'lassen','With lassen + infinitive, the finite auxiliary stands before the infinitive group.')));
-  }
-  if(level>=2){
-    out.push(q('Ich hätte gestern länger ___ ___.','arbeiten müssen','Counterfactual perfect with modal: hätte + arbeiten müssen.','','Fill both words'));
-    out.push(q('Sie hätte früher ___ ___.','gehen dürfen','Counterfactual perfect with modal: hätte + gehen dürfen.','','Fill both words'));
-    out.push(q('Wir hätten das Problem ___ ___.','lösen können','Counterfactual perfect with modal: hätten + lösen können.','','Fill both words'));
-  }
-  return out;
-}
-
-function participle(v){const map={bezahlen:'bezahlt',lösen:'gelöst',kontrollieren:'kontrolliert',reparieren:'repariert',unterschreiben:'unterschrieben',öffnen:'geöffnet',schliessen:'geschlossen',machen:'gemacht',erledigen:'erledigt',prüfen:'geprüft',bauen:'gebaut',informieren:'informiert',ändern:'geändert',benutzen:'benutzt',rauchen:'geraucht',parken:'geparkt',fotografieren:'fotografiert',essen:'gegessen',trinken:'getrunken',sprechen:'gesprochen',telefonieren:'telefoniert',arbeiten:'gearbeitet',tanzen:'getanzt',lachen:'gelacht'};return map[v]||v;}
-function buildPassive(level){
-  const out=[];
-  const items=[['Die Rechnung','bezahlen','muss'],['Das Problem','lösen','muss'],['Der Vertrag','unterschreiben','soll'],['Die Tür','schliessen','muss'],['Das Auto','reparieren','kann'],['Die Daten','prüfen','müssen'],['Die Regeln','ändern','können'],['Die Maschine','benutzen','darf'],['Der Bericht','erledigen','muss'],['Die Mitarbeitenden','informieren','müssen']];
-  items.forEach(([n,v,m])=>out.push(q(`${n} ${m} heute ___ werden.`,participle(v),`Passive with modal: modal + Partizip II + werden.`)));
-  [['Hier','rauchen','darf nicht'],['Hier','parken','darf nicht'],['Im Labor','essen','darf nicht'],['Im Zug','rauchen','darf nicht'],['In diesem Raum','fotografieren','darf nicht'],['Während der Sitzung','sprechen','soll nicht'],['Im Büro','telefonieren','darf'],['Heute','arbeiten','muss'],['Auf der Feier','tanzen','darf'],['Im Kurs','lachen','darf']].forEach(([place,v,m])=>out.push(q(`${place} ${m} ___ werden.`,participle(v),'Impersonal passive: modal + participle + werden.')));
-  if(level>=1){
-    [['Das Haus','bauen'],['Die Strasse','kontrollieren'],['Der Computer','reparieren'],['Die Rechnung','bezahlen'],['Die Tür','öffnen']].forEach(([n,v])=>{
-      out.push(q(`${n} ___ gestern ${participle(v)}.`,'wurde','Präteritum Passiv: wurde + Partizip II.'));
-      out.push(q(`${n} ist gestern ${participle(v)} ___.`,'worden','Perfekt Passiv: ist + Partizip II + worden (not geworden).'));
+  if(level>=4){
+    [['m','dat','ohne article','warm','Tee'],['f','dat','ohne article','klar','Sprache'],['n','nom','ein','kompliziert','Problem'],['m','acc','den','aktuell','Bericht'],['n','dat','dem','neu','System']].forEach(([g,c,t,a,n])=>{
+      const type=t==='ohne article'?'none':t==='ein'?'ein':'def';const det=t==='ohne article'?'':t;
+      out.push(q(`${det?det+' ':''}___ ${n}`,adjForm(a,adjectiveEnding(type,g,c)),`${c}, ${g}, ${type==='none'?'no article':type+' pattern'} → ${adjectiveEnding(type,g,c)}.`,`Grundform: ${a}`,'Mastery'));
     });
   }
-  if(level>=2){
-    out.push(q('Man muss die Rechnung heute bezahlen.\nDie Rechnung ___ heute bezahlt werden.','muss','Active man-sentence → passive with the same modal.'));
-    out.push(q('Man darf hier nicht rauchen.\nHier ___ nicht geraucht werden.','darf','Impersonal passive keeps the modal.'));
+  return out;
+}
+
+const K1={
+  sein:['sei','seiest','sei','seien','seiet','seien'],haben:['habe','habest','habe','haben','habet','haben'],werden:['werde','werdest','werde','werden','werdet','werden'],
+  kommen:['komme','kommest','komme','kommen','kommet','kommen'],gehen:['gehe','gehest','gehe','gehen','gehet','gehen'],wissen:['wisse','wissest','wisse','wissen','wisset','wissen'],
+  können:['könne','könnest','könne','können','könnet','können'],müssen:['müsse','müssest','müsse','müssen','müsset','müssen'],dürfen:['dürfe','dürfest','dürfe','dürfen','dürfet','dürfen'],
+  wollen:['wolle','wollest','wolle','wollen','wollet','wollen'],sollen:['solle','sollest','solle','sollen','sollet','sollen']
+};
+const SUBS=['ich','du','er','wir','ihr','sie'];
+function k1Question(verb,subIdx,rest){const sub=SUBS[subIdx],ans=K1[verb][subIdx];return q(`Konjunktiv I: ${sub} ___ ${rest}.`,ans,`${verb}, ${sub}: ${ans}.`,`Verb: ${verb} · Subjekt: ${sub}`,'Konjunktiv I');}
+function buildK1(level){
+  const out=[];
+  if(level===0){
+    [['sein','bereit'],['haben','Zeit'],['werden','nervös']].forEach(([v,r])=>SUBS.forEach((_,i)=>out.push(k1Question(v,i,r))));
+    out.push(k1Question('können',0,'morgen kommen'),k1Question('können',1,'morgen kommen'));
+    return out;
   }
+  if(level===1){
+    [['können','morgen kommen'],['müssen','heute arbeiten'],['dürfen','früher gehen'],['wollen','mehr lernen'],['sollen','morgen anrufen'],['wissen','nichts davon'],['kommen','morgen'],['gehen','jetzt nach Hause']].forEach(([v,r],vi)=>[0,1,2,4].forEach(i=>out.push(k1Question(v,i,r))));
+    return out;
+  }
+  if(level===2){
+    const habenParts=['gearbeitet','gelernt','angerufen','gesehen','gelesen','verstanden'];
+    const seinParts=['gekommen','gegangen','gefahren','geblieben','angekommen','aufgestanden'];
+    habenParts.forEach((p,pi)=>SUBS.forEach((s,i)=>out.push(q(`Indirekte Rede im Perfekt: ${s} ___ gestern ${p}.`,K1.haben[i],`Perfect reported speech: ${K1.haben[i]} + ${p}.`,`Hilfsverb: haben · Subjekt: ${s}`,'K I perfect'))));
+    seinParts.forEach((p,pi)=>SUBS.forEach((s,i)=>out.push(q(`Indirekte Rede im Perfekt: ${s} ___ gestern ${p}.`,K1.sein[i],`Perfect reported speech: ${K1.sein[i]} + ${p}.`,`Hilfsverb: sein · Subjekt: ${s}`,'K I perfect'))));
+    return out;
+  }
+  if(level===3){
+    const passive=[['der Bericht','veröffentlicht'],['das Problem','gelöst'],['die Rechnung','bezahlt'],['der Vertrag','unterschrieben'],['die Daten','geprüft'],['die Tür','geschlossen']];
+    passive.forEach(([n,p])=>out.push(q(`Indirekte Rede, Passiv: ${n} ___ morgen ${p}.`,'werde',`Reported passive: werde + ${p}.`,`Subjekt: singular · Verb: werden`,'K I passive')));
+    const plural=[['die Berichte','veröffentlicht'],['die Probleme','gelöst'],['die Rechnungen','bezahlt'],['die Verträge','unterschrieben'],['die Daten','geprüft'],['die Türen','geschlossen']];
+    plural.forEach(([n,p])=>out.push(q(`Indirekte Rede, Passiv: ${n} ___ morgen ${p}.`,'werden',`Plural Konjunktiv I of werden = werden (same as indicative).`,`Subjekt: plural · Verb: werden`,'K I passive')));
+    [['ich','kommen',0],['du','gehen',1],['er','kommen',2],['ihr','gehen',4]].forEach(([s,v,i])=>out.push(q(`Indirekte Rede: ${s} ___ morgen ${v}.`,K1.werden[i],`Future/reported intention: ${K1.werden[i]} + infinitive.`,`werden · Subjekt: ${s}`,'K I future')));
+    ['können','müssen','dürfen','wollen'].forEach(v=>[0,1,2,4].forEach(i=>out.push(k1Question(v,i,'das erklären'))));
+    return out;
+  }
+  const repl={haben:'hätten',kommen:'kämen',können:'könnten',müssen:'müssten',dürfen:'dürften',werden:'würden'};
+  Object.entries(repl).forEach(([v,a])=>{
+    out.push(q(`Formelle indirekte Rede. Verb: ${v}, Subjekt: sie (Plural).\nK I wäre mit dem Indikativ identisch. Verwende die Ersatzform: sie ___.`,a,`Because plural Konjunktiv I is identical to indicative here, use Konjunktiv II: ${a}.`,`Verb: ${v} · Subjekt: sie (Plural)`,'K I replacement'));
+    out.push(q(`Formelle indirekte Rede: K I von ${v} wäre bei „wir“ nicht sichtbar.\nWir ___.`,a,`Replacement form: ${a}.`,`Verb: ${v} · Subjekt: wir`,'K I replacement'));
+  });
+  [
+    ['sein','sie','seien'],['haben','ihr','habet'],['wissen','du','wissest'],['können','ihr','könnet']
+  ].forEach(([v,sub,a])=>out.push(q(`Konjunktiv I, eindeutige Form: ${sub} ___.`,a,`${v}, ${sub}: ${a}.`,`Verb: ${v} · Subjekt: ${sub}`,'K I decision')));
+  [['habe','gearbeitet'],['sei','gekommen'],['werde','veröffentlicht'],['könne','kommen'],['müsse','arbeiten'],['dürfe','gehen'],['wolle','bleiben'],['solle','anrufen']].forEach(([a,r])=>out.push(q(`Indirekte Rede, 3. Person Singular: er ___ ${r}.`,a,`Correct reported-speech form: ${a}.`,`Advanced mixed form`,'K I mastery')));
+  return out;
+}
+
+const HAVE_PARTS=['gelernt','gearbeitet','gegessen','gesehen','verstanden','vergessen','gekauft','angerufen','gelesen','gemacht'];
+const SEIN_PARTS=['gekommen','gegangen','gefahren','geblieben','aufgestanden','angekommen','eingeschlafen','zurückgekehrt','losgefahren','weggegangen'];
+const H2=['hätte','hättest','hätte','hätten','hättet','hätten'];
+const W2=['wäre','wärst','wäre','wären','wärt','wären'];
+function buildK2Past(level){
+  const out=[];
+  if(level===0){
+    HAVE_PARTS.forEach(p=>out.push(q(`Wenn ich mehr ${p} ___, wäre es anders gewesen.`,'hätte',`haben-verb → ${p} hätte.`,`Hilfsverb im Perfekt: haben`,'K II past')));
+    SEIN_PARTS.forEach(p=>out.push(q(`Wenn ich früher ${p} ___, hätte ich mehr Zeit gehabt.`,'wäre',`sein-verb → ${p} wäre.`,`Hilfsverb im Perfekt: sein`,'K II past')));
+    return out;
+  }
+  if(level===1){
+    SUBS.forEach((s,i)=>HAVE_PARTS.slice(0,4).forEach(p=>out.push(q(`Wenn ${s} mehr ${p} ___, wäre das Ergebnis besser gewesen.`,H2[i],`Subject ${s}: ${H2[i]}.`,`haben-verb · Subjekt: ${s}`,'K II past'))));
+    SUBS.forEach((s,i)=>SEIN_PARTS.slice(0,4).forEach(p=>out.push(q(`Wenn ${s} früher ${p} ___, wäre alles leichter gewesen.`,W2[i],`Subject ${s}: ${W2[i]}.`,`sein-verb · Subjekt: ${s}`,'K II past'))));
+    return out;
+  }
+  const modal=[['arbeiten','müssen'],['kommen','können'],['gehen','dürfen'],['helfen','können'],['bleiben','müssen'],['fahren','dürfen'],['warten','müssen'],['anrufen','sollen'],['lernen','müssen'],['mitkommen','können']];
+  if(level===2){
+    modal.forEach(([inf,mod])=>out.push(q(`Hauptsatz, irreale Vergangenheit: Ich ___ ${inf} ${mod}.`,`hätte ${inf} ${mod}`,`Modal + another infinitive uses Ersatzinfinitiv: hätte ${inf} ${mod}.`,`Subjekt: ich · Modal: ${mod}`,'K II + modal')));
+    modal.forEach(([inf,mod])=>out.push(q(`Nebensatz: ..., weil ich ___ ${inf} ${mod}.`,`hätte ${inf} ${mod}`,`In the subordinate double-infinitive cluster, hätte comes before the infinitives.`,`Modal: ${mod}`,'K II word order')));
+    return out;
+  }
+  if(level===3){
+    modal.forEach(([inf,mod],j)=>{
+      const i=j%6;out.push(q(`Irreale Vergangenheit: ${SUBS[i]} ___ ${inf} ${mod}.`,`${H2[i]} ${inf} ${mod}`,`Subject ${SUBS[i]} → ${H2[i]} + double infinitive.`,`Modal: ${mod}`,'K II transformation'));
+      out.push(q(`Nebensatz: ..., weil ${SUBS[i]} ___ ${inf} ${mod}.`,`${H2[i]} ${inf} ${mod}`,`Finite ${H2[i]} before the two infinitives.`,`Modal: ${mod}`,'K II subordinate'));
+    });
+    return out;
+  }
+  HAVE_PARTS.forEach((p,i)=>out.push(q(`Mastery: ${SUBS[i%6]} ${p} — bilde die irreale Vergangenheit: ${SUBS[i%6]} ___ ${p}.`,H2[i%6],`Use ${H2[i%6]} with a haben-verb.`,`Subjekt: ${SUBS[i%6]}`,'K II mastery')));
+  SEIN_PARTS.forEach((p,i)=>out.push(q(`Mastery: ${SUBS[i%6]} ${p} — bilde die irreale Vergangenheit: ${SUBS[i%6]} ___ ${p}.`,W2[i%6],`Use ${W2[i%6]} with a sein-verb.`,`Subjekt: ${SUBS[i%6]}`,'K II mastery')));
+  modal.forEach(([inf,mod],i)=>out.push(q(`Mastery: ${SUBS[i%6]} + ${inf} + ${mod}. Gib den ganzen Verbblock an.`,`${H2[i%6]} ${inf} ${mod}`,`Correct verb block: ${H2[i%6]} ${inf} ${mod}.`,`Irreale Vergangenheit`,'K II mastery')));
+  return out;
+}
+
+const MODAL_ITEMS=[
+  ['muss','müssen','länger arbeiten'],['darf','dürfen','früher gehen'],['kann','können','morgen kommen'],['muss','müssen','mehr lernen'],['muss','müssen','zu Hause bleiben'],
+  ['kann','können','dir helfen'],['kann','können','das erklären'],['muss','müssen','früh aufstehen'],['darf','dürfen','allein fahren'],['muss','müssen','warten']
+];
+function splitPhrase(phrase){const parts=phrase.trim().split(/\s+/);const inf=parts.pop();return {pre:parts.join(' '),inf};}
+const LASSEN_ITEMS=[['mein Auto','reparieren'],['meine Haare','schneiden'],['die Wohnung','streichen'],['den Computer','prüfen'],['die Tür','öffnen'],['das Paket','liefern'],['die Heizung','kontrollieren'],['den Vertrag','prüfen'],['das Fahrrad','reparieren'],['die Fenster','putzen']];
+function buildErsatz(level){
+  const out=[];
+  if(level===0){
+    MODAL_ITEMS.forEach(([pres,infmod,phrase])=>out.push(q(`Präsens: Ich ${pres} ${phrase}.\nPerfekt: Ich habe ${phrase} ___.`,infmod,`The modal stays infinitive: ${phrase} ${infmod}.`,`Modal: ${infmod}`,'Ersatzinfinitiv')));
+    MODAL_ITEMS.forEach(([pres,infmod,phrase])=>out.push(q(`Präsens: Er ${pres==='muss'?'muss':pres==='darf'?'darf':'kann'} ${phrase}.\nPerfekt: Er hat ${phrase} ___.`,infmod,`Perfekt with modal + infinitive → ${infmod}, not a participle.`,`Modal: ${infmod}`,'Ersatzinfinitiv')));
+    return out;
+  }
+  if(level===1){
+    LASSEN_ITEMS.forEach(([obj,inf])=>out.push(q(`Präsens: Ich lasse ${obj} ${inf}.\nPerfekt: Ich habe ${obj} ${inf} ___.`,'lassen',`lassen + another infinitive uses lassen in Perfekt.`,`Verb: lassen`,'lassen + infinitive')));
+    MODAL_ITEMS.forEach(([pres,mod,phrase])=>{const {pre,inf}=splitPhrase(phrase);out.push(q(`Nebensatz im Perfekt: ..., weil ich ${pre?pre+' ':''}habe ${inf} ___.`,mod,`Subordinate clause with Ersatzinfinitiv: ${pre?pre+' ':''}habe ${inf} ${mod}.`,`Modal: ${mod}`,'Subordinate cluster'));});
+    return out;
+  }
+  if(level===2){
+    MODAL_ITEMS.forEach(([pres,mod,phrase])=>out.push(q(`Bilde den ganzen Perfekt-Verbblock: Ich ___ .\nAusgang: Ich ${pres} ${phrase}.`,`habe ${phrase} ${mod}`,`Full Perfekt cluster: habe ${phrase} ${mod}.`,`Modal: ${mod}`,'Full verb cluster')));
+    LASSEN_ITEMS.forEach(([obj,inf])=>out.push(q(`Bilde den ganzen Perfekt-Verbblock: Ich ___ .\nAusgang: Ich lasse ${obj} ${inf}.`,`habe ${obj} ${inf} lassen`, `Full cluster: habe ${obj} ${inf} lassen.`,`lassen`,'Full verb cluster')));
+    return out;
+  }
+  if(level===3){
+    MODAL_ITEMS.forEach(([pres,mod,phrase])=>out.push(q(`Irreale Vergangenheit: Ich ___ ${phrase} ${mod}.`,'hätte',`Konjunktiv II past with modal: hätte + ${phrase} + ${mod}.`,`Modal: ${mod}`,'Ersatz + K II')));
+    LASSEN_ITEMS.forEach(([obj,inf])=>out.push(q(`Irreale Vergangenheit: Ich hätte ${obj} ${inf} ___.`,'lassen',`lassen remains infinitive in the double-infinitive construction.`,`Verb: lassen`,'lassen + K II')));
+    return out;
+  }
+  MODAL_ITEMS.forEach(([pres,mod,phrase])=>{
+    out.push(q(`Mastery, Nebensatz: ..., weil er gestern ___ .\nAusgang: Er ${pres} ${phrase}.`,`hat ${phrase} ${mod}`,`Correct subordinate verb cluster: hat ${phrase} ${mod}.`,`Perfekt · Modal: ${mod}`,'Ersatz mastery'));
+    out.push(q(`Mastery, irreale Vergangenheit: Er ___ .\nBedeutung: He would have had to/been able to ${phrase}.`,`hätte ${phrase} ${mod}`,`Correct counterfactual cluster: hätte ${phrase} ${mod}.`,`Modal: ${mod}`,'Ersatz mastery'));
+  });
+  LASSEN_ITEMS.forEach(([obj,inf])=>out.push(q(`Mastery, Nebensatz: ..., weil sie ${obj} ___ .`,`hat ${inf} lassen`,`Perfekt subordinate cluster: hat ${inf} lassen.`,`Verb: lassen`,'Ersatz mastery')));
+  return out;
+}
+
+function participle(v){const map={bezahlen:'bezahlt',lösen:'gelöst',kontrollieren:'kontrolliert',reparieren:'repariert',unterschreiben:'unterschrieben',öffnen:'geöffnet',schliessen:'geschlossen',machen:'gemacht',erledigen:'erledigt',prüfen:'geprüft',bauen:'gebaut',informieren:'informiert',ändern:'geändert',benutzen:'benutzt',rauchen:'geraucht',parken:'geparkt',fotografieren:'fotografiert',essen:'gegessen',trinken:'getrunken',sprechen:'gesprochen',telefonieren:'telefoniert',arbeiten:'gearbeitet',tanzen:'getanzt',lachen:'gelacht',reinigen:'gereinigt',liefern:'geliefert',installieren:'installiert'};return map[v]||v;}
+function activeImpersonal(place,v,m){const neg=m.includes(' nicht');const modal=modalSingular(m);return `Man ${modal} ${place.toLowerCase()}${neg?' nicht':''} ${v}.`;}
+function modalSingular(m){const x=m.replace(' nicht','');if(x==='müssen'||x==='muss')return 'muss';if(x==='können'||x==='kann')return 'kann';if(x==='dürfen'||x==='darf')return 'darf';if(x==='sollen'||x==='soll')return 'soll';return x;}
+const PASSIVE_ITEMS=[
+  ['die Rechnung','bezahlen','muss'],['das Problem','lösen','muss'],['der Vertrag','unterschreiben','soll'],['die Tür','schliessen','muss'],['das Auto','reparieren','kann'],
+  ['die Daten','prüfen','müssen'],['die Regeln','ändern','können'],['die Maschine','benutzen','darf'],['der Bericht','erledigen','muss'],['die Mitarbeitenden','informieren','müssen'],
+  ['der Raum','reinigen','muss'],['das Paket','liefern','kann'],['die Software','installieren','muss'],['die Strasse','kontrollieren','soll'],['das Fenster','öffnen','darf']
+];
+function buildPassive(level){
+  const out=[];
+  if(level===0){
+    PASSIVE_ITEMS.forEach(([n,v,m])=>out.push(q(`Aktiv: Man ${modalSingular(m)} ${n} heute ${v}.\nPassiv: ${n[0].toUpperCase()+n.slice(1)} ${m} heute ___ werden.`,participle(v),`Passive with modal: ${m} + ${participle(v)} + werden.`,`Verb: ${v}`,'Passive participle')));
+    [['Hier','rauchen','darf nicht'],['Hier','parken','darf nicht'],['Im Labor','essen','darf nicht'],['Im Zug','rauchen','darf nicht'],['In diesem Raum','fotografieren','darf nicht']].forEach(([place,v,m])=>out.push(q(`Aktiv: ${activeImpersonal(place,v,m)}\nPassiv: ${place} ${m} ___ werden.`,participle(v),`Impersonal passive: ${m} + ${participle(v)} + werden.`,`Verb: ${v}`,'Impersonal passive')));
+    return out;
+  }
+  if(level===1){
+    PASSIVE_ITEMS.forEach(([n,v,m])=>out.push(q(`Aktiv: Man ${modalSingular(m)} ${n} ${v}.\nPassiv: ${n[0].toUpperCase()+n.slice(1)} ___ ${participle(v)} werden.`,m,`Keep the modal meaning and conjugate it for the passive subject: ${m}.`,`Modal from active sentence: ${m}`,'Passive modal')));
+    [['Hier','rauchen','darf nicht'],['Hier','parken','darf nicht'],['Im Labor','essen','darf nicht'],['Im Büro','telefonieren','darf'],['Heute','arbeiten','muss']].forEach(([place,v,m])=>out.push(q(`Aktiv: ${activeImpersonal(place,v,m)}\nPassiv: ${place} ___ ${participle(v)} werden.`,m,`The modal is copied from the active sentence.`,`Modal: ${m}`,'Passive modal')));
+    return out;
+  }
+  if(level===2){
+    PASSIVE_ITEMS.slice(0,10).forEach(([n,v])=>{
+      const cap=n[0].toUpperCase()+n.slice(1);
+      out.push(q(`Präteritum Passiv: ${cap} ___ gestern ${participle(v)}.`,'wurde',`Präteritum passive = wurde + participle.`,`Verb: ${v}`,'Passive tense'));
+      out.push(q(`Perfekt Passiv: ${cap} ist gestern ${participle(v)} ___.`,'worden',`Perfekt passive = ist + participle + worden.`,`Verb: ${v}`,'Passive tense'));
+    });
+    return out;
+  }
+  if(level===3){
+    PASSIVE_ITEMS.forEach(([n,v,m])=>out.push(q(`Forme vollständig ins Passiv um:\nMan ${modalSingular(m)} ${n} heute ${v}.\n${n[0].toUpperCase()+n.slice(1)} ___ .`,`${m} heute ${participle(v)} werden`,`Full passive predicate: ${m} heute ${participle(v)} werden.`,`Verb: ${v} · Modal: ${m}`,'Passive transformation')));
+    [['Hier','rauchen','darf nicht'],['Hier','parken','darf nicht'],['Im Labor','essen','darf nicht'],['Im Büro','telefonieren','darf'],['Heute','arbeiten','muss']].forEach(([place,v,m])=>out.push(q(`Forme vollständig ins Passiv um:\n${activeImpersonal(place,v,m)}\n${place} ___ .`,`${m} ${participle(v)} werden`,`Full impersonal passive: ${m} ${participle(v)} werden.`,`Verb: ${v} · Modal: ${m}`,'Passive transformation')));
+    return out;
+  }
+  PASSIVE_ITEMS.forEach(([n,v,m])=>{
+    const aux=n.startsWith('die Daten')||n.startsWith('die Regeln')||n.startsWith('die Mitarbeitenden')?'haben':'hat';
+    const modalInf=m.split(' ').pop()==='müssen'?'müssen':m.split(' ').pop()==='können'?'können':m.split(' ').pop()==='darf'?'dürfen':m.split(' ').pop()==='soll'?'sollen':m.split(' ').pop()==='muss'?'müssen':'können';
+    out.push(q(`Perfekt mit Modal, Passiv: ${n[0].toUpperCase()+n.slice(1)} ${aux} heute ${participle(v)} werden ___.`,modalInf,`Passive + modal in Perfekt ends with werden + modal infinitive: ${modalInf}.`,`Verb: ${v} · Modal infinitive: ${modalInf}`,'Passive + modal perfect'));
+  });
+  [['Das Haus','bauen'],['Der Computer','reparieren'],['Die Rechnung','bezahlen'],['Die Tür','öffnen'],['Die Daten','prüfen']].forEach(([n,v])=>out.push(q(`Mastery: ${n} ist bereits ${participle(v)} ___.`,'worden',`Perfect passive uses worden, not geworden.`,`Verb: ${v}`,'Passive mastery')));
   return out;
 }
 
 function buildCases(level){
   const out=[];
   const pairs=[
-    ['Ich lege das Buch auf ___ Tisch.','Das Buch liegt auf ___ Tisch.','den','dem'],
-    ['Ich gehe in ___ Garten.','Ich sitze in ___ Garten.','den','dem'],
-    ['Ich hänge das Bild an ___ Wand.','Das Bild hängt an ___ Wand.','die','der'],
-    ['Ich stelle die Tasche unter ___ Stuhl.','Die Tasche steht unter ___ Stuhl.','den','dem'],
-    ['Ich stelle die Flasche neben ___ Schrank.','Die Flasche steht neben ___ Schrank.','den','dem'],
-    ['Wir fahren vor ___ Haus.','Wir warten vor ___ Haus.','das','dem'],
-    ['Ich stelle die Lampe hinter ___ Sofa.','Die Lampe steht hinter ___ Sofa.','das','dem'],
-    ['Ich lege die Zeitung auf ___ Regal.','Die Zeitung liegt auf ___ Regal.','das','dem']
+    ['Ich lege das Buch auf ___ Tisch.','Das Buch liegt auf ___ Tisch.','den','dem','der Tisch'],
+    ['Ich gehe in ___ Garten.','Ich sitze in ___ Garten.','den','dem','der Garten'],
+    ['Ich hänge das Bild an ___ Wand.','Das Bild hängt an ___ Wand.','die','der','die Wand'],
+    ['Ich stelle die Tasche unter ___ Stuhl.','Die Tasche steht unter ___ Stuhl.','den','dem','der Stuhl'],
+    ['Ich stelle die Flasche neben ___ Schrank.','Die Flasche steht neben ___ Schrank.','den','dem','der Schrank'],
+    ['Wir fahren vor ___ Haus.','Wir warten vor ___ Haus.','das','dem','das Haus'],
+    ['Ich stelle die Lampe hinter ___ Sofa.','Die Lampe steht hinter ___ Sofa.','das','dem','das Sofa'],
+    ['Ich lege die Zeitung auf ___ Regal.','Die Zeitung liegt auf ___ Regal.','das','dem','das Regal'],
+    ['Ich hänge die Lampe über ___ Tisch.','Die Lampe hängt über ___ Tisch.','den','dem','der Tisch'],
+    ['Ich stelle den Stuhl zwischen ___ Schränke.','Der Stuhl steht zwischen ___ Schränken.','die','den','die Schränke']
   ];
-  pairs.forEach(([move,loc,acc,dat])=>{
-    out.push(q(move,acc,'Direction/change of position → Akkusativ.','article only'));
-    out.push(q(loc,dat,'Location/no change of position → Dativ.','article only'));
-  });
+  if(level===0){pairs.forEach(([move,loc,acc,dat,n])=>{out.push(q(move,acc,'Destination/change of position → Akkusativ.',`Nomen: ${n} · Richtung`,'Wechselpräposition'));out.push(q(loc,dat,'Location/no change of position → Dativ.',`Nomen: ${n} · Ort`,'Wechselpräposition'));});return out;}
   const fixed=[
-    ['Ich helfe ___ Bruder.','meinem','helfen + Dativ'],['Ich danke ___ Kollegin.','meiner','danken + Dativ'],['Der Film gefällt ___.','mir','gefallen + Dativ'],['Ich folge ___.','ihm','folgen + Dativ'],['Ich frage ___.','ihn','fragen + Akkusativ'],['Ich sehe ___.','sie','sehen + Akkusativ'],['Ich spreche mit ___.','ihr','mit + Dativ'],['Ich warte auf ___.','ihn','auf + Akkusativ after warten'],['Ich denke an ___.','sie','an + Akkusativ after denken']
+    ['Ich helfe meinem Bruder. → Ich helfe ___.','ihm','helfen + Dativ; Bruder = masculine.'],['Ich helfe meiner Schwester. → Ich helfe ___.','ihr','helfen + Dativ; Schwester = feminine.'],
+    ['Ich danke meinem Kollegen. → Ich danke ___.','ihm','danken + Dativ.'],['Ich danke meiner Kollegin. → Ich danke ___.','ihr','danken + Dativ.'],
+    ['Ich folge Paul. → Ich folge ___.','ihm','folgen + Dativ.'],['Ich folge Anna. → Ich folge ___.','ihr','folgen + Dativ.'],
+    ['Ich frage Paul. → Ich frage ___.','ihn','fragen + Akkusativ.'],['Ich frage Anna. → Ich frage ___.','sie','fragen + Akkusativ.'],
+    ['Ich sehe Paul. → Ich sehe ___.','ihn','sehen + Akkusativ.'],['Ich sehe Anna. → Ich sehe ___.','sie','sehen + Akkusativ.'],
+    ['Ich spreche mit Paul. → Ich spreche mit ___.','ihm','mit + Dativ; Paul = masculine.'],['Ich spreche mit Anna. → Ich spreche mit ___.','ihr','mit + Dativ; Anna = feminine.'],
+    ['Ich warte auf Paul. → Ich warte auf ___.','ihn','warten auf + Akkusativ.'],['Ich warte auf Anna. → Ich warte auf ___.','sie','warten auf + Akkusativ.'],
+    ['Ich denke an Paul. → Ich denke an ___.','ihn','denken an + Akkusativ.'],['Ich denke an Anna. → Ich denke an ___.','sie','denken an + Akkusativ.'],
+    ['Der Film gefällt mir. → Der Film gefällt ___. (Paul)','ihm','gefallen + Dativ; Paul → ihm.'],['Der Film gefällt mir. → Der Film gefällt ___. (Anna)','ihr','gefallen + Dativ; Anna → ihr.'],
+    ['Ich antworte Paul. → Ich antworte ___.','ihm','antworten + Dativ.'],['Ich antworte Anna. → Ich antworte ___.','ihr','antworten + Dativ.']
   ];
-  fixed.forEach(([p,a,e])=>out.push(q(p,a,e)));
-  if(level>=1){
-    const prep=[
-      ['Ich fahre mit ___ Zug.','dem','mit + Dativ'],['Ich bin bei ___ Arbeit.','der','bei + Dativ'],['Ich komme von ___ Bahnhof.','dem','von + Dativ'],['Ich komme aus ___ Haus.','dem','aus + Dativ'],['Wir stimmen gegen ___ Plan.','den','gegen + Akkusativ'],['Das Geschenk ist für ___ Firma.','die','für + Akkusativ'],['Ich fahre ohne ___ Auto.','das','ohne + Akkusativ'],['Wir gehen durch ___ Park.','den','durch + Akkusativ']
-    ];
-    prep.forEach(([p,a,e])=>out.push(q(p,a,e)));
-  }
-  return out;
+  if(level===1){fixed.forEach(([p,a,e])=>out.push(q(p,a,e,'Antecedent is shown in the sentence','Fixed verb case')));return out;}
+  const prep=[
+    ['Ich fahre mit ___ Zug.','dem','mit + Dativ','der Zug'],['Ich bin bei ___ Arbeit.','der','bei + Dativ','die Arbeit'],['Ich komme von ___ Bahnhof.','dem','von + Dativ','der Bahnhof'],['Ich komme aus ___ Haus.','dem','aus + Dativ','das Haus'],
+    ['Wir gehen zu ___ Ärztin.','der','zu + Dativ','die Ärztin'],['Ich fahre nach ___ Arbeit nach Hause.','der','nach + Dativ (temporal/sequence)','die Arbeit'],['Wir stimmen gegen ___ Plan.','den','gegen + Akkusativ','der Plan'],['Das Geschenk ist für ___ Firma.','die','für + Akkusativ','die Firma'],
+    ['Ich fahre ohne ___ Auto.','das','ohne + Akkusativ','das Auto'],['Wir gehen durch ___ Park.','den','durch + Akkusativ','der Park'],['Wir laufen um ___ See.','den','um + Akkusativ','der See'],['Sie arbeitet mit ___ neuen System.','dem','mit + Dativ','das System'],
+    ['Ich spreche von ___ Projekt.','dem','von + Dativ','das Projekt'],['Er bleibt bei ___ Kindern.','den','bei + Dativ plural','die Kinder'],['Sie geht ohne ___ Bruder.','ihren','ohne + Akkusativ','ihr Bruder'],['Wir fahren mit ___ Kolleginnen.','den','mit + Dativ plural','die Kolleginnen'],
+    ['Das ist für ___ Kollegen.','den','für + Akkusativ','der Kollege'],['Ich komme aus ___ Schweiz.','der','aus + Dativ','die Schweiz'],['Sie fährt zu ___ Bahnhof.','dem','zu + Dativ','der Bahnhof'],['Wir gehen durch ___ Stadt.','die','durch + Akkusativ','die Stadt']
+  ];
+  if(level===2){prep.forEach(([p,a,e,n])=>out.push(q(p,a,e,`Nomen: ${n}`,'Preposition case')));return out;}
+  if(level===3){return [...pairs.flatMap(([move,loc,acc,dat,n])=>[q(move,acc,'Direction → Akkusativ.',`Nomen: ${n}`,'Mixed case'),q(loc,dat,'Location → Dativ.',`Nomen: ${n}`,'Mixed case')]),...fixed.map(([p,a,e])=>q(p,a,e,'Antecedent shown','Mixed case')),...prep.map(([p,a,e,n])=>q(p,a,e,`Nomen: ${n}`,'Mixed case'))];}
+  const advanced=[...fixed,...prep.map(([p,a,e])=>[p,a,e])];
+  pairs.forEach(([move,loc,acc,dat,n])=>{advanced.push([move,acc,'Direction → Akkusativ.']);advanced.push([loc,dat,'Location → Dativ.']);});
+  return advanced.map(([p,a,e])=>q(p,a,e,'Read the noun/person cue; no guessing required.','Cases mastery'));
 }
 
+const MODAL_PAST=[['müssen','musste','müsste'],['dürfen','durfte','dürfte'],['können','konnte','könnte'],['wollen','wollte','wollte'],['sollen','sollte','sollte'],['mögen','mochte','möchte']];
 function buildPast(level){
   const out=[];
-  const modal=[['müssen','musste'],['dürfen','durfte'],['können','konnte'],['wollen','wollte'],['sollen','sollte'],['mögen','mochte']];
-  modal.forEach(([inf,p])=>{
-    out.push(q(`Früher ___ ich jeden Tag früh aufstehen.`,p,`Real past → Präteritum of ${inf}: ${p}.`));
-    out.push(q(`Als Kind ___ ich das oft.`,p,`Real past → ${p}.`));
-  });
-  const contrasts=[
-    ['Wenn ich mehr Zeit ___, würde ich öfter lesen.','hätte','Konjunktiv II: hätte.'],['Gestern ___ ich keine Zeit.','hatte','Real past: hatte.'],['Wenn das Wetter besser ___, würden wir wandern.','wäre','Konjunktiv II: wäre.'],['Gestern ___ das Wetter schlecht.','war','Real past: war.'],['Das Haus ___ 2015 verkauft.','wurde','Past passive: wurde.'],['Ich ___ gern öfter reisen.','würde','Conditional: würde.'],['Wenn ich nicht so früh aufstehen ___, würde ich länger schlafen.','müsste','Hypothetical: müsste.'],['Gestern ___ ich sehr früh aufstehen.','musste','Real past: musste.'],['Wenn ich mehr Zeit ___, könnte ich kommen.','hätte','Hypothetical: hätte.']
-  ];
-  contrasts.forEach(([p,a,e])=>out.push(q(p,a,e)));
-  const pq=[
-    ['Nachdem ich gegessen ___, ging ich spazieren.','hatte','Plusquamperfekt with haben: hatte + Partizip II.'],['Als wir ankamen, ___ der Zug schon abgefahren.','war','Plusquamperfekt with sein: war + Partizip II.'],['Nachdem sie nach Hause gekommen ___, rief sie an.','war','kommen → sein, so Plusquamperfekt uses war.'],['Er war müde, weil er wenig geschlafen ___.','hatte','schlafen → haben, so Plusquamperfekt uses hatte.'],['Nachdem wir das Problem gelöst ___, gingen wir essen.','hatten','Plural: hatten + Partizip II.'],['Als sie anrief, ___ ich schon eingeschlafen.','war','einschlafen → sein.']
-  ];
-  pq.forEach(([p,a,e])=>out.push(q(p,a,e)));
-  if(level>=2){
-    out.push(q('Wenn ich das gewusst ___, hätte ich anders entschieden.','hätte','Konjunktiv II past: gewusst hätte.'));
-    out.push(q('Wenn du früher gekommen ___, hätten wir zusammen gegessen.','wärst','kommen → sein, so gekommen wärst.'));
+  if(level===0){
+    MODAL_PAST.forEach(([inf,p])=>{
+      out.push(q(`Gestern ___ ich früh aufstehen. (${inf}, real past)`,p,`Real past of ${inf}: ${p}.`,`Infinitiv: ${inf}`,'Modal Präteritum'));
+      out.push(q(`Früher ___ ich das jeden Tag. (${inf}, real past)`,p,`Real past of ${inf}: ${p}.`,`Infinitiv: ${inf}`,'Modal Präteritum'));
+      out.push(q(`Als Kind ___ ich das oft. (${inf}, real past)`,p,`Real past of ${inf}: ${p}.`,`Infinitiv: ${inf}`,'Modal Präteritum'));
+    });
+    out.push(q('Gestern ___ ich keine Zeit. (haben, real past)','hatte','Real past of haben: hatte.','Verb: haben','Past form'));
+    out.push(q('Gestern ___ ich krank. (sein, real past)','war','Real past of sein: war.','Verb: sein','Past form'));
+    return out;
   }
+  if(level===1){
+    MODAL_PAST.forEach(([inf,real,hyp])=>{
+      out.push(q(`Gestern ___ ich früh gehen. (${inf}, real past)`,real,`Real past: ${real}.`,`Meaning: real past`,'Real vs hypothetical'));
+      out.push(q(`Wenn es möglich wäre, ___ ich früher gehen. (${inf}, hypothetical)`,hyp,`Hypothetical form: ${hyp}.`,`Meaning: hypothetical`,'Real vs hypothetical'));
+    });
+    [['haben','hatte','hätte'],['sein','war','wäre'],['müssen','musste','müsste'],['können','konnte','könnte']].forEach(([v,real,hyp])=>{
+      out.push(q(`Gestern ___ das so. (${v}, real past)`,real,`Real past: ${real}.`,`Verb: ${v}`,'Real vs hypothetical'));
+      out.push(q(`Wenn es anders ___, ... (${v}, hypothetical)`,hyp,`Hypothetical: ${hyp}.`,`Verb: ${v}`,'Real vs hypothetical'));
+    });
+    return out;
+  }
+  if(level===2){
+    const pq=[['essen','gegessen','hatte'],['arbeiten','gearbeitet','hatte'],['lernen','gelernt','hatte'],['schlafen','geschlafen','hatte'],['sehen','gesehen','hatte'],['kommen','gekommen','war'],['gehen','gegangen','war'],['fahren','gefahren','war'],['ankommen','angekommen','war'],['einschlafen','eingeschlafen','war']];
+    pq.forEach(([v,p,a])=>{out.push(q(`Nachdem ich ${p} ___, ging ich weiter. (${v}, Plusquamperfekt)`,a,`${v} uses ${a==='war'?'sein':'haben'} → ${a}.`,`Verb: ${v}`,'Plusquamperfekt'));out.push(q(`Als sie anrief, ___ ich schon ${p}. (${v}, Plusquamperfekt)`,a,`Plusquamperfekt auxiliary: ${a}.`,`Verb: ${v}`,'Plusquamperfekt'));});
+    return out;
+  }
+  if(level===3){
+    const c=[
+      ['Das Haus ___ 2015 verkauft. (past passive)','wurde','Past passive → wurde.'],
+      ['Der Vertrag ___ gestern unterschrieben. (past passive)','wurde','Past passive → wurde.'],
+      ['Die Tür ___ am Morgen geöffnet. (past passive)','wurde','Past passive → wurde.'],
+      ['Das Auto ___ letzte Woche repariert. (past passive)','wurde','Past passive → wurde.'],
+      ['Ich ___ gern öfter reisen. (conditional)','würde','Conditional → würde.'],
+      ['Ich ___ das anders machen. (conditional)','würde','Conditional → würde.'],
+      ['Er ___ gern länger bleiben. (conditional)','würde','Conditional → würde.'],
+      ['Sie ___ lieber zu Hause arbeiten. (conditional)','würde','Conditional → würde.'],
+      ['Gestern ___ ich keine Zeit. (real past of haben)','hatte','Real past → hatte.'],
+      ['Letzte Woche ___ er viel Arbeit. (real past of haben)','hatte','Real past → hatte.'],
+      ['Wenn ich mehr Zeit ___, würde ich lesen. (hypothetical)','hätte','Hypothetical → hätte.'],
+      ['Wenn er weniger Arbeit ___, käme er mit. (hypothetical)','hätte','Hypothetical → hätte.'],
+      ['Gestern ___ das Wetter schlecht. (real past of sein)','war','Real past → war.'],
+      ['Am Montag ___ er krank. (real past of sein)','war','Real past → war.'],
+      ['Wenn das Wetter besser ___, würden wir gehen. (hypothetical)','wäre','Hypothetical → wäre.'],
+      ['Wenn er gesund ___, käme er mit. (hypothetical)','wäre','Hypothetical → wäre.'],
+      ['Gestern ___ ich früh aufstehen. (müssen, real past)','musste','Real past → musste.'],
+      ['Wenn ich später anfangen könnte, ___ ich nicht so früh aufstehen. (müssen, hypothetical)','müsste','Hypothetical → müsste.'],
+      ['Früher ___ ich länger bleiben. (können, real past)','konnte','Real past → konnte.'],
+      ['Mit mehr Zeit ___ ich länger bleiben. (können, hypothetical)','könnte','Hypothetical → könnte.']
+    ];
+    c.forEach(([p,a,e])=>out.push(q(p,a,e,'Meaning is labelled','Form contrast')));
+    return out;
+  }
+  const mastery=[
+    ['Gestern ___ ich früh aufstehen. (müssen, real past)','musste'],
+    ['Wenn ich später anfangen könnte, ___ ich nicht so früh aufstehen. (müssen, hypothetical)','müsste'],
+    ['Früher ___ ich das allein machen. (können, real past)','konnte'],
+    ['Mit Hilfe ___ ich das schneller machen. (können, hypothetical)','könnte'],
+    ['Das Problem ___ gestern gelöst. (past passive)','wurde'],
+    ['Der Vertrag ___ am Freitag unterschrieben. (past passive)','wurde'],
+    ['Ich ___ das Problem anders lösen. (conditional)','würde'],
+    ['Er ___ lieber morgen kommen. (conditional)','würde'],
+    ['Nachdem ich gegessen ___, ging ich spazieren. (Plusquamperfekt; essen)','hatte'],
+    ['Nachdem er gearbeitet ___, fuhr er nach Hause. (Plusquamperfekt; arbeiten)','hatte'],
+    ['Als wir ankamen, ___ der Zug schon abgefahren. (Plusquamperfekt; abfahren)','war'],
+    ['Nachdem sie angekommen ___, rief sie an. (Plusquamperfekt; ankommen)','war'],
+    ['Wenn ich mehr Zeit ___, könnte ich kommen. (haben, hypothetical)','hätte'],
+    ['Gestern ___ ich mehr Zeit. (haben, real past)','hatte'],
+    ['Wenn sie hier ___, könnten wir anfangen. (sein, hypothetical)','wäre'],
+    ['Gestern ___ sie hier. (sein, real past)','war'],
+    ['Als Kind ___ ich oft länger aufbleiben. (dürfen, real past)','durfte'],
+    ['Wenn ich wählen könnte, ___ ich länger bleiben. (dürfen, hypothetical)','dürfte'],
+    ['Früher ___ er jeden Tag anrufen. (sollen, real past)','sollte'],
+    ['Wenn der Arzt es empfehlen würde, ___ er früher schlafen gehen. (sollen, hypothetical)','sollte']
+  ];
+  mastery.forEach(([p,a])=>out.push(q(p,a,'Use the labelled meaning and verb form.','Cue is explicit','Past mastery')));
   return out;
 }
 
 function buildPron(level){
   const out=[];
-  const da=[
-    ['Wartest du auf den Bus? – Ja, ich warte schon lange ___.','darauf','Thing/topic → da(r)+preposition.'],
-    ['Denkst du an die Prüfung? – Ja, ich denke oft ___.','daran','Thing/topic → daran.'],
-    ['Sprichst du über das Problem? – Ja, wir sprechen oft ___.','darüber','Thing/topic → darüber.'],
-    ['Arbeitest du mit dem neuen System? – Ja, ich arbeite täglich ___.','damit','Thing → damit.'],
-    ['Freust du dich auf den Urlaub? – Ja, ich freue mich sehr ___.','darauf','Thing/event → darauf.'],
-    ['Zweifelst du an der Idee? – Ja, ich zweifle ___.','daran','Thing/idea → daran.'],
-    ['Interessierst du dich für Geschichte? – Ja, ich interessiere mich ___.','dafür','Thing/topic → dafür.'],
-    ['Erinnerst du dich an das Gespräch? – Ja, ich erinnere mich ___.','daran','Thing/event → daran.']
+  const things=[
+    ['auf den Bus','darauf'],['an die Prüfung','daran'],['über das Problem','darüber'],['mit dem System','damit'],['auf den Urlaub','darauf'],['an der Idee','daran'],['für Geschichte','dafür'],['an das Gespräch','daran'],['von dem Projekt','davon'],['mit dem Ergebnis','damit'],
+    ['über die Reise','darüber'],['für den Plan','dafür'],['an die Zukunft','daran'],['auf die Antwort','darauf'],['von der Änderung','davon'],['mit der Lösung','damit'],['über den Film','darüber'],['für die Stelle','dafür'],['an den Termin','daran'],['auf das Wochenende','darauf']
   ];
-  da.forEach(x=>out.push(q(...x)));
-  const people=[
-    ['Denkst du an deine Grossmutter? – Ja, ich denke oft ___.','an sie','Person → preposition + personal pronoun.'],
-    ['Sprichst du mit deinem Bruder? – Ja, ich spreche oft ___.','mit ihm','Person → mit + ihm.'],
-    ['Wartest du auf Anna? – Ja, ich warte ___.','auf sie','Person → preposition + pronoun.'],
-    ['Hast du von deinem Chef erzählt? – Ja, ich habe ___ erzählt.','von ihm','Person → von + ihm.'],
-    ['Freust du dich auf Paul? – Ja, ich freue mich ___.','auf ihn','Person → auf + ihn.']
-  ];
-  people.forEach(x=>out.push(q(...x)));
+  if(level===0){things.forEach(([obj,a])=>out.push(q(`Ersetze die Sache durch ein Pronominaladverb: ${obj} → ___.`,a,`Thing/topic → da(r)+preposition: ${a}.`,`Bezugswort: ${obj}`,'Da-compound')));return out;}
+  if(level===1){
+    const pairs=[
+      ['auf den Bus','darauf','auf Paul','auf ihn'],['an die Prüfung','daran','an Anna','an sie'],['über das Problem','darüber','über Markus','über ihn'],['mit dem System','damit','mit Laura','mit ihr'],['auf den Urlaub','darauf','auf Maria','auf sie'],
+      ['von dem Projekt','davon','von Thomas','von ihm'],['für den Plan','dafür','für Sophie','für sie'],['an das Gespräch','daran','an Peter','an ihn'],['mit der Lösung','damit','mit Julia','mit ihr'],['über die Reise','darüber','über Daniel','über ihn']
+    ];
+    pairs.forEach(([thing,ta,person,pa])=>{out.push(q(`Sache: ${thing} → Ich beziehe mich ___.`,ta,'Thing → da(r)+preposition.',`Sache: ${thing}`,'Person vs thing'));out.push(q(`Person: ${person} → Ich beziehe mich ___.`,pa,'Person → preposition + personal pronoun.',`Person: ${person}`,'Person vs thing'));});
+    return out;
+  }
   const rel=[
-    ['Das ist der Kollege, ___ ich gestern angerufen habe.','den','anrufen + Akkusativ.'],['Das ist der Kollege, ___ ich gestern geschrieben habe.','dem','schreiben + Dativ.'],['Das ist die Frau, ___ ich gestern gesehen habe.','die','sehen + Akkusativ.'],['Das ist die Frau, ___ ich geholfen habe.','der','helfen + Dativ.'],['Das ist das Buch, ___ mir meine Schwester empfohlen hat.','das','The book is the Akkusativ object; mir is already dative.'],['Das ist der Mann, mit ___ ich gesprochen habe.','dem','mit + Dativ; masculine relative pronoun → dem.'],['Das ist die Frau, mit ___ er zusammenarbeitet.','der','mit + Dativ; feminine → der.'],['Das ist der Mann, von ___ ich erzählt habe.','dem','von + Dativ; person → von dem.']
+    ['der Kollege','ich gestern angerufen habe','den','anrufen + Akkusativ'],['der Kollege','ich gestern geschrieben habe','dem','schreiben + Dativ'],['die Frau','ich gestern gesehen habe','die','sehen + Akkusativ'],['die Frau','ich geholfen habe','der','helfen + Dativ'],['das Buch','mir meine Schwester empfohlen hat','das','book = Akkusativ object'],
+    ['der Mann','ich gesprochen habe','mit dem','mit + Dativ'],['die Frau','er zusammenarbeitet','mit der','mit + Dativ'],['der Mann','ich erzählt habe','von dem','von + Dativ'],['das Thema','wir gesprochen haben','über das','über + Akkusativ'],['die Kollegin','wir warten','auf die','auf + Akkusativ']
   ];
-  rel.forEach(x=>out.push(q(...x)));
-  if(level>=1){
-    const gen=[
-      ['Das ist der Mann, ___ Tochter in Berlin studiert.','dessen','Masculine possessor → dessen.'],['Das ist die Frau, ___ Sohn in Wien lebt.','deren','Feminine possessor → deren.'],['Das ist das Kind, ___ Eltern in Zürich wohnen.','dessen','Neuter possessor → dessen.'],['Das sind die Nachbarn, ___ Sohn bei uns arbeitet.','deren','Plural possessor → deren.']
-    ];gen.forEach(x=>out.push(q(...x)));
+  if(level===2){rel.forEach(([n,cl,a,e])=>{out.push(q(`Das ist ${n}, ___ ${cl}.`,a,e,'Case comes from the relative clause','Relative pronoun'));out.push(q(`Relativsatz ergänzen: ${n} — ___ ${cl}.`,a,e,'Use gender + case','Relative pronoun'));});return out;}
+  if(level===3){
+    const gen=[['der Mann','Tochter','dessen'],['die Frau','Sohn','deren'],['das Kind','Eltern','dessen'],['die Nachbarn','Sohn','deren'],['der Kollege','Auto','dessen'],['die Kollegin','Projekt','deren'],['das Unternehmen','Leitung','dessen'],['die Teams','Leiter','deren'],['die Firma','Strategie','deren'],['der Verein','Präsident','dessen']];
+    gen.forEach(([n,x,a])=>out.push(q(`Das ist ${n}, ___ ${x} hier arbeitet/steht.`,a,`Possessor gender/number determines ${a}.`,`Genitive relative pronoun`,'Genitive relative')));
+    rel.forEach(([n,cl,a,e])=>out.push(q(`Advanced: Das ist ${n}, ___ ${cl}.`,a,e,'Preposition stays with the relative pronoun','Preposition relative')));
+    return out;
   }
-  if(level>=2){
-    out.push(q('Das ist das Thema, über ___ wir gestern gesprochen haben.','das','Preposition + relative pronoun for a thing: über das.'));
-    out.push(q('Das ist die Kollegin, auf ___ wir warten.','die','auf + Akkusativ; feminine → die.'));
-  }
-  return out;
+  return [...things.map(([obj,a])=>q(`Sache: ${obj} → ___.`,a,'Thing → da-compound.',`Bezugswort: ${obj}`,'Pronoun mastery')),...rel.map(([n,cl,a,e])=>q(`Das ist ${n}, ___ ${cl}.`,a,e,'Relative clause','Pronoun mastery')),...[['der Mann','dessen'],['die Frau','deren'],['das Kind','dessen'],['die Nachbarn','deren']].map(([n,a])=>q(`${n}: Genitiv-Relativpronomen = ___.`,a,`Correct form: ${a}.`,'Possessor','Pronoun mastery'))];
 }
 
 const BUILDERS={adj:buildAdj,k1:buildK1,k2past:buildK2Past,ersatz:buildErsatz,passive:buildPassive,cases:buildCases,past:buildPast,pron:buildPron};
 function getQuestions(theme,test){
   if(theme==='boss'){
-    const all=[]; THEMES.forEach(t=>all.push(...pick20(BUILDERS[t.id](2),`${t.id}-boss` ).slice(0,4)));
-    return pick20(all,'boss-final');
+    const all=[];THEMES.forEach(t=>all.push(...pick20(BUILDERS[t.id](4),`${t.id}-boss`).slice(0,4)));
+    return pick20(all,'boss-v2');
   }
-  return pick20(BUILDERS[theme](test),`${theme}-${test}`);
+  const pool=BUILDERS[theme](test);
+  return test<=1?take20(pool,`${theme}-${test}-ordered`):pick20(pool,`${theme}-${test}-mixed-v2`);
 }
 
-function tone(type){
+function getAudio(){
+  if(!audioCtx){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;audioCtx=new AC();}
+  return audioCtx;
+}
+async function unlockAudio(){
+  if(!soundOn)return;
+  try{const ac=getAudio();if(ac&&ac.state==='suspended')await ac.resume();}catch(e){}
+}
+async function tone(type){
   if(!soundOn)return;
   try{
-    const AC=window.AudioContext||window.webkitAudioContext; const ac=new AC();
-    const now=ac.currentTime;
-    const notes= type==='good'?[660,880]:type==='bad'?[180,140]:type==='finish'?[523,659,784,1046]:[420];
-    notes.forEach((f,i)=>{const o=ac.createOscillator(),g=ac.createGain();o.type=type==='bad'?'sawtooth':'sine';o.frequency.value=f;g.gain.setValueAtTime(.0001,now+i*.08);g.gain.exponentialRampToValueAtTime(type==='bad'?.055:.045,now+i*.08+.01);g.gain.exponentialRampToValueAtTime(.0001,now+i*.08+.13);o.connect(g);g.connect(ac.destination);o.start(now+i*.08);o.stop(now+i*.08+.15)});
+    const ac=getAudio();if(!ac)return;if(ac.state==='suspended')await ac.resume();if(ac.state!=='running')return;
+    const now=ac.currentTime;const notes=type==='good'?[660,880]:type==='bad'?[180,140]:type==='finish'?[523,659,784,1046]:[520,700];
+    notes.forEach((f,i)=>{const o=ac.createOscillator(),g=ac.createGain();o.type=type==='bad'?'sawtooth':'sine';o.frequency.value=f;g.gain.setValueAtTime(.0001,now+i*.075);g.gain.exponentialRampToValueAtTime(type==='bad'?.055:.045,now+i*.075+.01);g.gain.exponentialRampToValueAtTime(.0001,now+i*.075+.13);o.connect(g);g.connect(ac.destination);o.start(now+i*.075);o.stop(now+i*.075+.15);});
   }catch(e){}
 }
-function setSound(v){soundOn=v;localStorage.setItem('dga_sound',JSON.stringify(v));document.getElementById('soundToggle').textContent=v?'🔊 Sound':'🔇 Muted';document.getElementById('soundToggle2').textContent=v?'🔊':'🔇';}
+function setSound(v,playTest=false){soundOn=v;localStorage.setItem('dga_sound',JSON.stringify(v));document.getElementById('soundToggle').textContent=v?'🔊 Sound':'🔇 Muted';document.getElementById('soundToggle2').textContent=v?'🔊':'🔇';if(v&&playTest){unlockAudio().then(()=>tone('tap'));}}
+function toggleSound(){setSound(!soundOn,true);}
+document.addEventListener('pointerdown',()=>unlockAudio(),{capture:true});
 
-document.getElementById('soundToggle').onclick=()=>setSound(!soundOn);document.getElementById('soundToggle2').onclick=()=>setSound(!soundOn);setSound(soundOn);
-function progressKey(theme,test){return `dga_${theme}_${test}`}
-function readBest(theme,test){return Number(localStorage.getItem(progressKey(theme,test))||0)}
+document.getElementById('soundToggle').onclick=toggleSound;document.getElementById('soundToggle2').onclick=toggleSound;setSound(soundOn,false);
+function progressKey(theme,test){return `dga_${theme}_${test}`;}
+function readBest(theme,test){return Number(localStorage.getItem(progressKey(theme,test))||0);}
 function renderHome(){
   const grid=document.getElementById('topicGrid');grid.innerHTML='';
   THEMES.forEach(t=>{
     const card=document.createElement('div');card.className='card';
     const buttons=TEST_NAMES.map((n,i)=>`<button class="testbtn" data-theme="${t.id}" data-test="${i}">${n}${readBest(t.id,i)?` <span class="scoretag">${readBest(t.id,i)}/20</span>`:''}</button>`).join('');
-    card.innerHTML=`<div class="cardhead"><div class="emoji">${t.emoji}</div><div><h4>${t.title}</h4><p>${t.desc}</p></div></div><div class="tests">${buttons}</div>`;grid.appendChild(card);
+    card.innerHTML=`<div class="cardhead"><div class="emoji">${t.emoji}</div><div><h4>${t.title}</h4><p>${t.desc}</p></div></div><div class="cardTools"><button class="rulesbtn" data-rules="${t.id}">📘 Grammar rules</button></div><div class="tests">${buttons}</div>`;grid.appendChild(card);
   });
-  const boss=document.createElement('div');boss.className='card boss';boss.innerHTML=`<div class="cardhead"><div class="emoji">👑</div><div><h4>Mixed Boss Run</h4><p>20 questions pulled from all eight themes. Great for checking whether the forms are becoming automatic.</p></div></div><div class="tests"><button class="testbtn" data-theme="boss" data-test="0">Start Boss${readBest('boss',0)?` <span class="scoretag">${readBest('boss',0)}/20</span>`:''}</button></div>`;grid.appendChild(boss);
+  const boss=document.createElement('div');boss.className='card boss';boss.innerHTML=`<div class="cardhead"><div class="emoji">👑</div><div><h4>Mixed Boss Run</h4><p>20 questions pulled from all eight themes at the advanced level.</p></div></div><div class="tests"><button class="testbtn" data-theme="boss" data-test="0">Start Boss${readBest('boss',0)?` <span class="scoretag">${readBest('boss',0)}/20</span>`:''}</button></div>`;grid.appendChild(boss);
   grid.querySelectorAll('button[data-theme]').forEach(b=>b.onclick=()=>startQuiz(b.dataset.theme,Number(b.dataset.test)));
+  grid.querySelectorAll('button[data-rules]').forEach(b=>b.onclick=()=>showRules(b.dataset.rules,'home'));
   updateStats();
 }
 function updateStats(){
-  let vals=[];for(const t of [...THEMES.map(x=>x.id),'boss'])for(let i=0;i<(t==='boss'?1:3);i++){const v=readBest(t,i);if(v)vals.push(v)}
+  let vals=[];for(const t of [...THEMES.map(x=>x.id),'boss'])for(let i=0;i<(t==='boss'?1:5);i++){const v=readBest(t,i);if(v)vals.push(v);}
   document.getElementById('testsDone').textContent=vals.length;document.getElementById('avgScore').textContent=vals.length?`${Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*5)}%`:'–';document.getElementById('bestStreak').textContent=localStorage.getItem('dga_bestStreak')||0;
 }
+function quizMarkup(){return `<div class="pill" id="qPill"></div><div class="prompt" id="prompt"></div><div class="cue" id="cue"></div><div class="answerRow"><input class="answer" id="answerInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type your answer…"/><button class="primary" id="checkBtn">Check</button></div><div class="chars" id="chars"></div><div class="feedback hidden" id="feedback"></div><div class="actions"><div class="streak" id="streakText">🔥 0 streak</div><button class="primary hidden" id="nextBtn">Next →</button></div>`;}
+function resetQuizCard(){document.getElementById('quizCard').innerHTML=quizMarkup();document.getElementById('checkBtn').onclick=check;document.getElementById('nextBtn').onclick=next;document.getElementById('answerInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();state.answered?next():check();}});}
 function startQuiz(theme,test){
-  state={theme,test,questions:getQuestions(theme,test),index:0,score:0,streak:0,bestStreak:0,answered:false,mistakes:[]};
-  document.getElementById('home').classList.add('hidden');document.getElementById('quizView').classList.remove('hidden');
-  const t=theme==='boss'?{title:'Mixed Boss Run'}:THEMES.find(x=>x.id===theme);
-  document.getElementById('quizTitle').textContent=t.title;document.getElementById('quizSubtitle').textContent=theme==='boss'?'20 mixed questions':`${TEST_NAMES[test]} · 20 questions`;
+  state={theme,test,questions:getQuestions(theme,test),index:0,score:0,streak:0,bestStreak:0,answered:false,mistakes:[],retryMode:false};
+  resetQuizCard();document.getElementById('home').classList.add('hidden');document.getElementById('rulesView').classList.add('hidden');document.getElementById('quizView').classList.remove('hidden');
+  const t=theme==='boss'?{title:'Mixed Boss Run'}:THEMES.find(x=>x.id===theme);document.getElementById('quizTitle').textContent=t.title;document.getElementById('quizSubtitle').textContent=theme==='boss'?'20 advanced mixed questions':`${TEST_NAMES[test]} · 20 questions · ${LEVEL_TEXT[test]}`;document.getElementById('quizRulesBtn').classList.toggle('hidden',theme==='boss');
   renderQuestion();
+}
+function startMistakeRetry(items){
+  const retryQuestions=items.map(m=>({...m.item,answers:[...m.item.answers]}));
+  state={...state,questions:retryQuestions,index:0,score:0,streak:0,bestStreak:0,answered:false,mistakes:[],retryMode:true};
+  resetQuizCard();document.getElementById('quizSubtitle').textContent=`Mistake drill · ${retryQuestions.length} question${retryQuestions.length===1?'':'s'}`;renderQuestion();
 }
 function renderQuestion(){
   const item=state.questions[state.index];state.answered=false;
-  document.getElementById('qPill').textContent=`Question ${state.index+1} of ${state.questions.length} · ${item.tag}`;
-  document.getElementById('prompt').textContent=item.prompt;document.getElementById('cue').textContent=item.cue?`Cue: ${item.cue}`:'';
-  const input=document.getElementById('answerInput');input.value='';input.disabled=false;input.focus();
-  document.getElementById('checkBtn').classList.remove('hidden');document.getElementById('nextBtn').classList.add('hidden');document.getElementById('feedback').className='feedback hidden';
-  document.getElementById('progressBar').style.width=`${(state.index/state.questions.length)*100}%`;
-  document.getElementById('streakText').textContent=`🔥 ${state.streak} streak`;
-  const chars=document.getElementById('chars');chars.innerHTML='';['ä','ö','ü','Ä','Ö','Ü','ß'].forEach(c=>{const b=document.createElement('button');b.className='char';b.textContent=c;b.onclick=()=>{const s=input.selectionStart,e=input.selectionEnd;input.value=input.value.slice(0,s)+c+input.value.slice(e);input.focus();input.selectionStart=input.selectionEnd=s+1};chars.appendChild(b)});
+  document.getElementById('qPill').textContent=`Question ${state.index+1} of ${state.questions.length} · ${item.tag}`;document.getElementById('prompt').textContent=item.prompt;document.getElementById('cue').textContent=item.cue?`Cue: ${item.cue}`:'';
+  const input=document.getElementById('answerInput');input.value='';input.disabled=false;input.focus();document.getElementById('checkBtn').classList.remove('hidden');document.getElementById('nextBtn').classList.add('hidden');document.getElementById('feedback').className='feedback hidden';document.getElementById('progressBar').style.width=`${(state.index/state.questions.length)*100}%`;document.getElementById('streakText').textContent=`🔥 ${state.streak} streak`;
+  const chars=document.getElementById('chars');chars.innerHTML='';['ä','ö','ü','Ä','Ö','Ü','ß'].forEach(c=>{const b=document.createElement('button');b.className='char';b.textContent=c;b.onclick=()=>{const s=input.selectionStart,e=input.selectionEnd;input.value=input.value.slice(0,s)+c+input.value.slice(e);input.focus();input.selectionStart=input.selectionEnd=s+1;};chars.appendChild(b);});
 }
 function check(){
-  if(state.answered)return;const input=document.getElementById('answerInput');if(!input.value.trim())return;
-  const item=state.questions[state.index];const ok=isCorrect(input.value,item.answers);state.answered=true;input.disabled=true;
-  const fb=document.getElementById('feedback');fb.className=`feedback ${ok?'good':'bad'}`;
+  if(state.answered)return;const input=document.getElementById('answerInput');if(!input.value.trim())return;const item=state.questions[state.index];const ok=isCorrect(input.value,item.answers);state.answered=true;input.disabled=true;const fb=document.getElementById('feedback');fb.className=`feedback ${ok?'good':'bad'}`;
   if(ok){state.score++;state.streak++;state.bestStreak=Math.max(state.bestStreak,state.streak);fb.innerHTML=`<strong>✓ Richtig!</strong><div class="answerline">${esc(item.answer)}</div>${item.explanation?`<small>${esc(item.explanation)}</small>`:''}`;tone('good');}
-  else{state.mistakes.push({q:item.prompt,yours:input.value,answer:item.answer,explanation:item.explanation});state.streak=0;fb.innerHTML=`<strong>Not quite.</strong><div class="answerline">Correct: <b>${esc(item.answer)}</b></div>${item.explanation?`<small>${esc(item.explanation)}</small>`:''}`;tone('bad');}
+  else{state.mistakes.push({item:{...item,answers:[...item.answers]},yours:input.value});state.streak=0;fb.innerHTML=`<strong>Not quite.</strong><div class="answerline">Correct: <b>${esc(item.answer)}</b></div>${item.explanation?`<small>${esc(item.explanation)}</small>`:''}`;tone('bad');}
   document.getElementById('checkBtn').classList.add('hidden');document.getElementById('nextBtn').classList.remove('hidden');document.getElementById('streakText').textContent=`🔥 ${state.streak} streak`;
 }
-function next(){if(!state.answered){check();return}state.index++;if(state.index>=state.questions.length)finish();else renderQuestion();}
+function next(){if(!state.answered){check();return;}state.index++;if(state.index>=state.questions.length)finish();else renderQuestion();}
 function finish(){
   document.getElementById('progressBar').style.width='100%';tone('finish');
-  const old=readBest(state.theme,state.test);if(state.score>old)localStorage.setItem(progressKey(state.theme,state.test),state.score);
-  const globalBest=Math.max(Number(localStorage.getItem('dga_bestStreak')||0),state.bestStreak);localStorage.setItem('dga_bestStreak',globalBest);
-  burst();
-  const pct=Math.round(state.score/state.questions.length*100);const message=pct>=90?'Sehr stark. That is becoming automatic.':pct>=75?'Nice work — a little polishing and this is yours.':pct>=55?'Useful practice zone. Review the misses and run it again.':'Perfect training material — these are exactly the forms to drill.';
-  const mistakes=state.mistakes.slice(0,8).map(m=>`<div class="mistake"><b>${esc(m.q)}</b><span>You: ${esc(m.yours)} · Correct: <strong>${esc(m.answer)}</strong>${m.explanation?` · ${esc(m.explanation)}`:''}</span></div>`).join('');
-  document.getElementById('quizCard').innerHTML=`<div class="result"><div class="pill">Test complete</div><div class="bigScore">${state.score}/20</div><h2>${pct}%</h2><p>${message}</p><div class="resultBtns"><button class="primary" id="againBtn">Play again</button><button class="secondary" id="homeBtn2">Back to map</button></div>${state.mistakes.length?`<div class="mistakes"><h3>Review your misses</h3>${mistakes}</div>`:'<p>✨ No mistakes to review. Clean run!</p>'}</div>`;
-  document.getElementById('againBtn').onclick=()=>startQuiz(state.theme,state.test);document.getElementById('homeBtn2').onclick=goHome;
+  if(!state.retryMode){const old=readBest(state.theme,state.test);if(state.score>old)localStorage.setItem(progressKey(state.theme,state.test),state.score);}
+  const globalBest=Math.max(Number(localStorage.getItem('dga_bestStreak')||0),state.bestStreak);localStorage.setItem('dga_bestStreak',globalBest);burst();
+  const pct=Math.round(state.score/state.questions.length*100);const message=pct>=90?'Sehr stark. That is becoming automatic.':pct>=75?'Nice work — a little polishing and this is yours.':pct>=55?'Useful practice zone. Review the misses and drill them once more.':'Good training material — focus on the pattern in the explanations, then retry the misses.';
+  const mistakes=state.mistakes.slice(0,12).map(m=>`<div class="mistake"><b>${esc(m.item.prompt)}</b><span>You: ${esc(m.yours)} · Correct: <strong>${esc(m.item.answer)}</strong>${m.item.explanation?` · ${esc(m.item.explanation)}`:''}</span></div>`).join('');
+  const retryButton=state.mistakes.length?`<button class="primary" id="retryMistakesBtn">Repeat mistakes (${state.mistakes.length})</button>`:'';
+  const againLabel=state.retryMode?'Repeat this mistake drill':'Play full test again';
+  document.getElementById('quizCard').innerHTML=`<div class="result"><div class="pill">${state.retryMode?'Mistake drill complete':'Test complete'}</div><div class="bigScore">${state.score}/${state.questions.length}</div><h2>${pct}%</h2><p>${message}</p><div class="resultBtns">${retryButton}<button class="secondary" id="againBtn">${againLabel}</button><button class="secondary" id="homeBtn2">Back to map</button></div>${state.mistakes.length?`<div class="mistakes"><h3>Review your misses</h3>${mistakes}</div>`:'<p>✨ No mistakes to review. Clean run!</p>'}</div>`;
+  if(state.mistakes.length){const copy=[...state.mistakes];document.getElementById('retryMistakesBtn').onclick=()=>startMistakeRetry(copy);}
+  document.getElementById('againBtn').onclick=()=>state.retryMode?startMistakeRetry(state.questions.map(item=>({item,yours:''}))):startQuiz(state.theme,state.test);document.getElementById('homeBtn2').onclick=goHome;
 }
-function goHome(){document.getElementById('quizView').classList.add('hidden');document.getElementById('home').classList.remove('hidden');location.reload();}
-function burst(){const c=document.getElementById('confetti');c.innerHTML='';for(let i=0;i<42;i++){const el=document.createElement('i');el.style.left=Math.random()*100+'vw';el.style.animationDelay=(Math.random()*.35)+'s';el.style.opacity=.5+Math.random()*.5;el.style.background=['#7c5cff','#27d4a5','#ffb84d','#ff6b79'][i%4];c.appendChild(el)}setTimeout(()=>c.innerHTML='',2200)}
+function goHome(){document.getElementById('quizView').classList.add('hidden');document.getElementById('rulesView').classList.add('hidden');document.getElementById('home').classList.remove('hidden');renderHome();window.scrollTo(0,0);}
+function burst(){const c=document.getElementById('confetti');c.innerHTML='';for(let i=0;i<42;i++){const el=document.createElement('i');el.style.left=Math.random()*100+'vw';el.style.animationDelay=(Math.random()*.35)+'s';el.style.opacity=.5+Math.random()*.5;el.style.background=['#7c5cff','#27d4a5','#ffb84d','#ff6b79'][i%4];c.appendChild(el);}setTimeout(()=>c.innerHTML='',2200);}
 
-document.getElementById('checkBtn').onclick=check;document.getElementById('nextBtn').onclick=next;document.getElementById('backBtn').onclick=goHome;
-document.getElementById('answerInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();state.answered?next():check()}});
-renderHome();
-// iPhone/PWA support
-(function(){
-  const standalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-  const hint = document.getElementById('installHint');
-  if (hint && !standalone && /iPhone|iPad|iPod/i.test(navigator.userAgent)) hint.style.display='block';
-  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));
+function showRules(themeId,from='home'){
+  rulesReturn=from;document.getElementById('home').classList.add('hidden');document.getElementById('quizView').classList.add('hidden');document.getElementById('rulesView').classList.remove('hidden');const content=document.getElementById('rulesContent');
+  if(!themeId){
+    document.getElementById('rulesTitle').textContent='Grammar rules';document.getElementById('rulesSubtitle').textContent='Choose a topic';
+    content.innerHTML=`<div class="ruleIntro"><h2>Grammar reference</h2><p>Open a topic for the rule, patterns, examples and the main trap to watch for.</p></div><div class="rulesIndex">${THEMES.map(t=>`<button class="ruleTopic" data-rule-topic="${t.id}"><span>${t.emoji}</span><strong>${t.title}</strong><small>${t.desc}</small></button>`).join('')}</div>`;
+    content.querySelectorAll('[data-rule-topic]').forEach(b=>b.onclick=()=>showRules(b.dataset.ruleTopic,from));
+  }else{
+    const t=THEMES.find(x=>x.id===themeId),r=RULES[themeId];document.getElementById('rulesTitle').textContent=`${t.emoji} ${t.title}`;document.getElementById('rulesSubtitle').textContent='Grammar reference';
+    content.innerHTML=`<div class="ruleIntro"><h2>${esc(t.title)}</h2><p>${esc(r.intro)}</p></div><div class="ruleSection"><h3>Core patterns</h3>${r.patterns.map(x=>`<div class="ruleLine">${esc(x)}</div>`).join('')}</div><div class="ruleSection"><h3>Examples</h3><div class="ruleExamples">${r.examples.map(x=>`<div class="ruleExample">${esc(x)}</div>`).join('')}</div></div><div class="ruleTrap"><strong>Common trap</strong><p>${esc(r.trap)}</p></div><div class="ruleSection"><h3>How the five tests progress</h3>${LEVEL_TEXT.map((x,i)=>`<div class="levelRow"><b>${i+1}. ${TEST_NAMES[i]}</b><span>${esc(x)}</span></div>`).join('')}</div>`;
   }
+  window.scrollTo(0,0);
+}
+function closeRules(){document.getElementById('rulesView').classList.add('hidden');if(rulesReturn==='quiz'){document.getElementById('quizView').classList.remove('hidden');}else{document.getElementById('home').classList.remove('hidden');}window.scrollTo(0,0);}
+
+document.getElementById('backBtn').onclick=goHome;document.getElementById('rulesBackBtn').onclick=closeRules;document.getElementById('rulesIndexBtn').onclick=()=>showRules(null,'home');document.getElementById('quizRulesBtn').onclick=()=>{if(state.theme&&state.theme!=='boss')showRules(state.theme,'quiz');};
+renderHome();resetQuizCard();
+(function(){
+  const standalone=(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true;const hint=document.getElementById('installHint');if(hint&&!standalone&&/iPhone|iPad|iPod/i.test(navigator.userAgent))hint.style.display='block';
+  if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{}));
 })();
+
 </script>
 </body>
 </html>
